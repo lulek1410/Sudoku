@@ -8,3 +8,5 @@ const SudokuGridManager = jest.fn().mockImplementation(() => {
     fillCellWithInput: mockFillCellWithInput,
   };
 });
+
+export default SudokuGridManager;

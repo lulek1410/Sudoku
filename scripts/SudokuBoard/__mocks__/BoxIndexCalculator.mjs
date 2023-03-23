@@ -1,5 +1,5 @@
-export const mockStartIndex = jest.fn();
-export const mockEndIndex = jest.fn();
+const mockStartIndex = jest.fn();
+const mockEndIndex = jest.fn();
 const BoxIndexCalculator = {
   startIndex: mockStartIndex,
   endIndex: mockEndIndex,
