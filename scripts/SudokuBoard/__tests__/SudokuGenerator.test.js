@@ -1,4 +1,3 @@
-import BoxIndexCalculator from "../BoxIndexCalculator.mjs";
 import SudokuGenerator from "../SudokuGenerator.mjs";
 
 describe("SudokuGeneratorTest", () => {

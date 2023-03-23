@@ -38,19 +38,21 @@ describe("SudokuGridManagerTest", () => {
   ];
 
   beforeEach(() => {
+    SudokuGenerator.mockClear();
     sut = new SudokuGridManager(cells);
+    expect(SudokuGenerator).toBeCalledTimes(1);
     for (const cell of cells) {
-      cell.style.backgroundColor = "";
-      cell.style.color = "";
-      cell.style.fontWeight = "";
-      cell.textContent = "";
+      $(cell).css("backgroundColor", "");
+      $(cell).css("color", "");
+      $(cell).css("fontWeight", "");
+      $(cell).text("");
     }
   });
 
   describe("selectCell", () => {
     function checkSignificantCells(expected) {
       for (const cell of significantCells) {
-        expect(cell[0].style.backgroundColor).toBe(expected);
+        expect(cell.css("backgroundColor")).toBe(expected);
       }
     }
 

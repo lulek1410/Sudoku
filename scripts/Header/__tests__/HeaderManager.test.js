@@ -1,6 +1,9 @@
 import HeaderManager from "../HeaderManager.mjs";
 import * as fs from "fs";
 import * as path from "path";
+import Timer from "../Timer.mjs";
+
+jest.mock("../Timer.mjs");
 
 describe("HeaderManagerTest", () => {
   const html = fs.readFileSync(path.resolve("./html/sudoku.html"), "utf8");
@@ -11,7 +14,20 @@ describe("HeaderManagerTest", () => {
     $("#difficulty-level").text("Easy");
   });
 
-  test("handleGameStart", () => {});
+  test("handleGameStart", () => {
+    expect($("#start-button").text()).toBe("Start");
+    sut.handleGameStart();
+    expect(Timer.startTimer).toBeCalledTimes(1);
+    expect($("#start-button").text()).toBe("Stop");
+  });
+
+  test("handleGameEnd", () => {
+    expect($("#start-button").text()).toBe("Stop");
+    sut.handleGameStop();
+    expect(Timer.stopTimer).toBeCalledTimes(1);
+    expect($("#start-button").text()).toBe("Start");
+  });
+
   test.each([
     {
       buttonName: "#left-arrow-button",
