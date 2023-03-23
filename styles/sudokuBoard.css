@@ -1,0 +1,35 @@
+#sudoku-board {
+  display: flex;
+  flex-direction: column;
+}
+
+.row:nth-child(3),
+.row:nth-child(6) {
+  border-bottom: 0.4vw var(--sudoku-board-border-color) solid;
+}
+
+.row {
+  display: flex;
+  font-size: var(--fs-primary);
+  font-weight: 300;
+}
+
+.row > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: var(--cell-size);
+  width: var(--cell-size);
+  border: min(0.15vw, 0.15vh) var(--sudoku-board-border-color) solid;
+}
+
+.pencil-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+}
+
+.row > div:nth-child(3),
+.row > div:nth-child(6){
+  border-right: 0.4vw var(--sudoku-board-border-color) solid;
+}

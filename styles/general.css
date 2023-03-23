@@ -1,0 +1,58 @@
+:root {
+  --sudoku-board-border-color: aqua;
+  --bg-color-primary: rgb(50, 50, 50);
+  --bg-color-secondary: rgb(30, 30, 30);
+  --aquamarine: aquamarine;
+  --aquamarine-dark: rgb(127, 255, 212, 0.8);
+  --fs-primary: min(4vw, 4vh);
+  --fs-secondary: min(3vw, 3vh);
+  --cell-size: min(10vw, 7vh);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  overflow: hidden;
+  margin: 0;
+  padding: 10vh 2vw 0 2vw;
+  background-color: var(--bg-color-primary);
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+body,
+button {
+  font-family: Dosis;
+}
+
+.centered-content-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+.btn {
+  background-color: var(--aquamarine);
+  color: var(--bg-color-primary);
+  border: none;
+  cursor: pointer;
+  transition: box-shadow 0.1s, scale 0.1s;
+}
+
+.btn:hover {
+  scale: 1.1;
+  box-shadow: 0.2vw 0.2vh 1vw black;
+}
+
+.btn:active {
+  background-color: var(--aquamarine-dark);
+}
+
+.center-text {
+  text-align: center;
+}

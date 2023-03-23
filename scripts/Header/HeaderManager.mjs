@@ -1,0 +1,29 @@
+export default class HeaderManager {
+  handleGameStart() {
+    //change button text to reset
+    //Timer.start                       ---TODO
+  }
+
+  changeDifficulty(event) {
+    let difficultyChange = 1;
+    let animationClass = "fadeInRight";
+    if (event.target.classList.contains("fa-chevron-left")) {
+      animationClass = "fadeInLeft";
+      difficultyChange = -1;
+    }
+    const difficultyLevels = ["Easy", "Medium", "Hard"];
+    const difficultyLevel = $("#difficulty-level");
+    let curretnIndex = difficultyLevels.indexOf(difficultyLevel.text());
+    curretnIndex += difficultyChange;
+    if (curretnIndex < 0) {
+      curretnIndex = difficultyLevels.length - 1;
+    } else if (curretnIndex >= difficultyLevels.length) {
+      curretnIndex = 0;
+    }
+    difficultyLevel.text(difficultyLevels[curretnIndex]);
+    difficultyLevel.addClass(animationClass);
+    setTimeout(() => {
+      difficultyLevel.removeClass(animationClass);
+    }, 100);
+  }
+}
