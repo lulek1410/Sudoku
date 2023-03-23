@@ -1,7 +1,14 @@
+import Timer from "./Timer.mjs";
+
 export default class HeaderManager {
   handleGameStart() {
-    //change button text to reset
-    //Timer.start                       ---TODO
+    Timer.startTimer();
+    $("#start-button").text("Stop");
+  }
+
+  handleGameStop() {
+    $("#start-button").text("Start");
+    Timer.stopTimer();
   }
 
   changeDifficulty(event) {

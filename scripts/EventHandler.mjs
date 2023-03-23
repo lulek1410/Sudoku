@@ -1,6 +1,7 @@
 import HeaderManager from "./Header/HeaderManager.mjs";
 import Timer from "./Header/Timer.mjs";
 import SudokuGridManager from "./SudokuBoard/SudokuGridManager.mjs";
+import PencilTool from "./ToolsButtons/PencilTool.mjs";
 
 export default class EventHandler {
   constructor() {
@@ -8,6 +9,7 @@ export default class EventHandler {
     this.#sudokuGridManager = new SudokuGridManager(this.#$cells);
     this.#headerManager = new HeaderManager($startButton);
     this.#listenForHeaderInteractions($startButton);
+    this.#listenForToolsInteractions();
   }
 
   #listenForGridInteractions() {
@@ -41,22 +43,31 @@ export default class EventHandler {
     $("#start-button").on("click", startButtonCallback);
   }
 
+  #listenForToolsInteractions() {
+    $("#check-button");
+    $("#pencil-button").on("click", function () {
+      PencilTool.pencilClicked();
+    });
+    $("#ereaser-button");
+  }
+
   #startCallback() {
     const startButton = $("#start-button");
-    if (startButton.text() == "Start") {
-      Timer.startTimer();
-      startButton.text("Stop");
-      this.#listenForGridInteractions();
+    console.log(this.#gameStarted);
+    if (!this.#gameStarted) {
       this.#sudokuGridManager.startGame();
-    } else if (startButton.text() == "Stop") {
-      startButton.text("Start");
-      Timer.stopTimer();
+      this.#headerManager.handleGameStart();
+      this.#listenForGridInteractions();
+      this.#gameStarted = true;
+    } else {
+      this.#headerManager.handleGameStop();
       this.#disableGridInteractions();
+      this.#gameStarted = false;
     }
   }
 
   #$cells = $(".row>div");
+  #gameStarted = false;
   #sudokuGridManager;
   #headerManager;
-  #gameStarted = false;
 }
