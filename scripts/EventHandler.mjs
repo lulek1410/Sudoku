@@ -9,7 +9,6 @@ export default class EventHandler {
     this.#sudokuGridManager = new SudokuGridManager(this.#$cells);
     this.#headerManager = new HeaderManager($startButton);
     this.#listenForHeaderInteractions($startButton);
-    this.#listenForToolsInteractions();
   }
 
   #listenForGridInteractions() {
@@ -51,6 +50,10 @@ export default class EventHandler {
     $("#ereaser-button");
   }
 
+  #disableToolsInteractions() {
+    $("#pencil-button").off("click");
+  }
+
   #startCallback() {
     const startButton = $("#start-button");
     console.log(this.#gameStarted);
@@ -58,6 +61,7 @@ export default class EventHandler {
       this.#sudokuGridManager.startGame();
       this.#headerManager.handleGameStart();
       this.#listenForGridInteractions();
+      this.#listenForToolsInteractions();
       this.#gameStarted = true;
     } else {
       this.#headerManager.handleGameStop();

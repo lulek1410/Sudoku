@@ -103,7 +103,7 @@ describe("SudokuGridManagerTest", () => {
       const secondCell = cells[35];
       event.target = secondCell;
       sut.selectCell(event);
-      expectSellectedCellProperties("", "white", "300", testCell);
+      expectSellectedCellProperties("", "rgb(200, 200, 200)", "300", testCell);
       expectSellectedCellProperties("aqua", "black", "400", secondCell);
       significantCells.splice(7, 1); //remove cells.eq(17)
       significantCells.splice(9, 1); //remove cells.eq(30)

@@ -1,6 +1,7 @@
 import BoxIndexCalculator from "./BoxIndexCalculator.mjs";
 import Constants from "../common/Constants.mjs";
 import SudokuGenerator from "./SudokuGenerator.mjs";
+import PencilTool from "../ToolsButtons/PencilTool.mjs";
 
 export default class SudokuGridManager {
   constructor(cells) {
@@ -19,10 +20,13 @@ export default class SudokuGridManager {
   }
 
   selectCell(event) {
-    const cell = $(event.target);
+    const target = $(event.target);
+    const cell = target.parent().hasClass("pencil-grid")
+      ? target.parent()
+      : target;
     if (this.#isCellEditable(cell)) {
       if (this.#selectedCell) {
-        this.#setSelectedCellStyleProperties("", "white", "300");
+        this.#setSelectedCellStyleProperties("", "rgb(200, 200, 200)", "300");
       }
 
       this.#selectedCell = cell;
@@ -37,10 +41,32 @@ export default class SudokuGridManager {
       return;
     }
     if (this.#isCellEditable(this.#selectedCell)) {
-      if (key >= 0 && key <= 9) {
-        this.#selectedCell.text(key);
-      } else if (key === "Backspace") {
-        this.#selectedCell.text("");
+      if (key > 0 && key <= 9) {
+        if (PencilTool.isPencilActive()) {
+          if (!this.#selectedCell.hasClass("pencil-grid")) {
+            this.#setCellText(this.#selectedCell, "");
+            3;
+          }
+          this.#selectedCell.addClass("pencil-grid");
+          if (
+            this.#selectedCell
+              .children()
+              .eq(key - 1)
+              .text() == ""
+          ) {
+            this.#setCellText(this.#selectedCell, key, key - 1);
+          } else {
+            this.#setCellText(this.#selectedCell, "", key - 1);
+          }
+        } else {
+          this.#selectedCell.removeClass("pencil-grid");
+          this.#selectedCell.children().each(function () {
+            $(this).text("");
+          });
+          this.#setCellText(this.#selectedCell, key);
+        }
+      } else if (key === "Backspace" && !PencilTool.isPencilActive()) {
+        this.#setCellText(this.#selectedCell, "");
       }
     }
   }
@@ -48,6 +74,9 @@ export default class SudokuGridManager {
   #setSelectedCellStyleProperties(bgColor, fontColor, fontWeight) {
     this.#setCellsBackgroundColor([this.#selectedCell], bgColor);
     this.#selectedCell.css("color", fontColor);
+    this.#selectedCell.children().each(function () {
+      $(this).css("color", fontColor);
+    });
     this.#selectedCell.css("fontWeight", fontWeight);
   }
 
@@ -96,7 +125,7 @@ export default class SudokuGridManager {
     for (let i = 0; i < Constants.gridSize; ++i) {
       for (let j = 0; j < Constants.gridSize; ++j) {
         this.#grid[i][j].editable = true;
-        this.#grid[i][j].element.text("");
+        this.#setCellText(this.#grid[i][j].element, "");
       }
     }
   }
@@ -176,11 +205,15 @@ export default class SudokuGridManager {
       for (let j = 0; j < Constants.gridSize; ++j) {
         const cell = this.#grid[i][j];
         if (cell.editable === false) {
-          cell.element.text(cell.value);
+          this.#setCellText(cell.element, cell.value);
           cell.element.css("color", "rgb(240, 120, 140)");
         }
       }
     }
+  }
+
+  #setCellText(cell, text, childNumber = 4) {
+    cell.children().eq(childNumber).text(text);
   }
 
   #grid;
