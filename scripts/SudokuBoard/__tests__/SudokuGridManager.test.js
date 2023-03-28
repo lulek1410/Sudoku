@@ -1,17 +1,19 @@
 import SudokuGridManager from "../SudokuGridManager.mjs";
 import BoxIndexCalculator from "../BoxIndexCalculator.mjs";
 import SudokuGenerator from "../SudokuGenerator.mjs";
+import PencilTool from "../../ToolsButtons/PencilTool.mjs";
 import * as fs from "fs";
 import * as path from "path";
 
 jest.mock("../SudokuGenerator");
 jest.mock("../BoxIndexCalculator");
+jest.mock("../../ToolsButtons/PencilTool");
 
 describe("SudokuGridManagerTest", () => {
   const html = fs.readFileSync(path.resolve("./html/sudoku.html"), "utf8");
   document.body.innerHTML = html;
 
-  const cells = $(".row>div");
+  const cells = $(".cell");
   let sut;
   const testCell = cells.eq(12);
   let significantCells = [
@@ -42,29 +44,27 @@ describe("SudokuGridManagerTest", () => {
     sut = new SudokuGridManager(cells);
     expect(SudokuGenerator).toBeCalledTimes(1);
     for (const cell of cells) {
-      $(cell).css("backgroundColor", "");
-      $(cell).css("color", "");
-      $(cell).css("fontWeight", "");
-      $(cell).text("");
+      PencilTool.isPencilActive.mockClear();
+      $(cell).removeClass("selected");
+      $(cell).removeClass("important");
+      $(cell).removeClass("uneditable");
+      $(cell)
+        .children()
+        .each(function () {
+          $(this).text("");
+        });
     }
   });
 
   describe("selectCell", () => {
     function checkSignificantCells(expected) {
       for (const cell of significantCells) {
-        expect(cell.css("backgroundColor")).toBe(expected);
+        expect(cell.hasClass("important")).toBe(expected);
       }
     }
 
-    function expectSellectedCellProperties(
-      backgroundColor,
-      color,
-      fontWeight,
-      selectedCell = testCell
-    ) {
-      expect($(selectedCell).css("backgroundColor")).toBe(backgroundColor);
-      expect($(selectedCell).css("color")).toBe(color);
-      expect($(selectedCell).css("fontWeight")).toBe(fontWeight);
+    function expectSellectedCellProperties(expected, selectedCell = testCell) {
+      expect($(selectedCell).hasClass("selected")).toBe(expected);
     }
 
     function expectToBeCalledWith(func, values) {
@@ -81,8 +81,8 @@ describe("SudokuGridManagerTest", () => {
     }
 
     test("cell selects", () => {
-      expectSellectedCellProperties("", "", "");
-      checkSignificantCells("");
+      expectSellectedCellProperties(false);
+      checkSignificantCells(false);
       mockReturnValues(BoxIndexCalculator.startIndex, [0, 3]);
       mockReturnValues(BoxIndexCalculator.endIndex, [2, 5]);
       let event = { target: testCell };
@@ -91,8 +91,8 @@ describe("SudokuGridManagerTest", () => {
       expectToBeCalledWith(BoxIndexCalculator.endIndex, [1, 3]);
       expect(BoxIndexCalculator.startIndex).toBeCalledTimes(2);
       expect(BoxIndexCalculator.endIndex).toBeCalledTimes(2);
-      checkSignificantCells("rgb(65, 65, 65)");
-      expectSellectedCellProperties("aqua", "black", "400");
+      checkSignificantCells(true);
+      expectSellectedCellProperties(true);
     });
 
     test("cell deselect if another selects", () => {
@@ -103,46 +103,81 @@ describe("SudokuGridManagerTest", () => {
       const secondCell = cells[35];
       event.target = secondCell;
       sut.selectCell(event);
-      expectSellectedCellProperties("", "rgb(200, 200, 200)", "300", testCell);
-      expectSellectedCellProperties("aqua", "black", "400", secondCell);
+      expectSellectedCellProperties(false, testCell);
+      expectSellectedCellProperties(true, secondCell);
       significantCells.splice(7, 1); //remove cells.eq(17)
       significantCells.splice(9, 1); //remove cells.eq(30)
-      checkSignificantCells("");
+      checkSignificantCells(false);
     });
   });
 
   describe("fillCellWithInput", () => {
+    function expectIsPenActive(cardinality = 1) {
+      expect(PencilTool.isPencilActive).toBeCalledTimes(cardinality);
+    }
+
+    function expectTextInTestCellsSubcell(expected, subcell = 4) {
+      expect(testCell.children().eq(subcell).text()).toBe(expected);
+    }
+
+    function invokeFillCellWithInput(inputKey) {
+      let event = { key: inputKey };
+      sut.fillCellWithInput(event);
+    }
+
+    function mockIsPencilActiveReturnValue(returnValue) {
+      PencilTool.isPencilActive.mockReturnValue(returnValue);
+    }
+
     test("do nothing when no cell selected", () => {
-      sut.fillCellWithInput("4");
+      invokeFillCellWithInput("4");
+      expectIsPenActive();
     });
 
     test("numerical input", () => {
+      mockIsPencilActiveReturnValue(false);
       let event = { target: testCell };
       sut.selectCell(event);
-      event.key = "5";
-      sut.fillCellWithInput(event);
-      expect(testCell.text()).toBe("5");
+      invokeFillCellWithInput("5");
+      expectIsPenActive();
+      expectTextInTestCellsSubcell("5");
     });
 
     test("input other than numerical does not chang cells text", () => {
+      mockIsPencilActiveReturnValue(false);
       let event = { target: testCell };
       sut.selectCell(event);
-      sut.fillCellWithInput("Control");
-      expect(testCell.text()).toBe("");
-      sut.fillCellWithInput("Enter");
-      expect(testCell.text()).toBe("");
-      sut.fillCellWithInput("a");
-      expect(testCell.text()).toBe("");
+      invokeFillCellWithInput("Control");
+      expectTextInTestCellsSubcell("");
+      invokeFillCellWithInput("Enter");
+      expectTextInTestCellsSubcell("");
+      invokeFillCellWithInput("a");
+      expectIsPenActive(3);
+      expectTextInTestCellsSubcell("");
     });
 
     test("remove inputed value when backspace used", () => {
-      let event = { target: testCell, key: "8" };
+      mockIsPencilActiveReturnValue(false);
+      let event = { target: testCell };
       sut.selectCell(event);
-      sut.fillCellWithInput(event);
-      expect(testCell.text()).toBe("8");
-      event.key = "Backspace";
-      sut.fillCellWithInput(event);
-      expect(testCell.text()).toBe("");
+      invokeFillCellWithInput("8");
+      expectTextInTestCellsSubcell("8");
+      invokeFillCellWithInput("Backspace");
+      expectIsPenActive(2);
+      expectTextInTestCellsSubcell("");
+    });
+
+    test("input with pencil tool active", () => {
+      mockIsPencilActiveReturnValue(true);
+      let event = { target: testCell };
+      sut.selectCell(event);
+      invokeFillCellWithInput("1");
+      expectTextInTestCellsSubcell("1", 0);
+      invokeFillCellWithInput("7");
+      expectTextInTestCellsSubcell("7", 6);
+      invokeFillCellWithInput("9");
+      expectTextInTestCellsSubcell("9", 8);
+      expectIsPenActive(3);
     });
   });
 
@@ -164,7 +199,7 @@ describe("SudokuGridManagerTest", () => {
       sut.startGame("Easy");
       let uneditableCells = 0;
       cells.each(function () {
-        if ($(this).text() != "") {
+        if ($(this).hasClass("uneditable") != "") {
           ++uneditableCells;
         }
       });

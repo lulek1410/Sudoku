@@ -21,31 +21,29 @@ export default class SudokuGridManager {
 
   selectCell(event) {
     const target = $(event.target);
-    const cell = target.parent().hasClass("pencil-grid")
-      ? target.parent()
-      : target;
+    const cell = target.parent().hasClass("cell") ? target.parent() : target;
     if (this.#isCellEditable(cell)) {
       if (this.#selectedCell) {
-        this.#setSelectedCellStyleProperties("", "rgb(200, 200, 200)", "300");
+        this.#selectedCell.removeClass("selected");
       }
 
       this.#selectedCell = cell;
       this.#markImportantCells();
-      this.#setSelectedCellStyleProperties("aqua", "black", "400");
+      this.#selectedCell.addClass("selected");
     }
   }
 
   fillCellWithInput(event) {
     const key = event.key;
+    const pencilActive = PencilTool.isPencilActive();
     if (!this.#selectedCell) {
       return;
     }
     if (this.#isCellEditable(this.#selectedCell)) {
       if (key > 0 && key <= 9) {
-        if (PencilTool.isPencilActive()) {
+        if (pencilActive) {
           if (!this.#selectedCell.hasClass("pencil-grid")) {
             this.#setCellText(this.#selectedCell, "");
-            3;
           }
           this.#selectedCell.addClass("pencil-grid");
           if (
@@ -65,35 +63,30 @@ export default class SudokuGridManager {
           });
           this.#setCellText(this.#selectedCell, key);
         }
-      } else if (key === "Backspace" && !PencilTool.isPencilActive()) {
+      } else if (key === "Backspace" && !pencilActive) {
         this.#setCellText(this.#selectedCell, "");
       }
     }
   }
 
-  #setSelectedCellStyleProperties(bgColor, fontColor, fontWeight) {
-    this.#setCellsBackgroundColor([this.#selectedCell], bgColor);
-    this.#selectedCell.css("color", fontColor);
-    this.#selectedCell.children().each(function () {
-      $(this).css("color", fontColor);
-    });
-    this.#selectedCell.css("fontWeight", fontWeight);
-  }
-
-  #setCellsBackgroundColor(cells, bgColor) {
-    let positions = [];
-    for (const cell of cells) {
-      positions.push(this.#findCellPosition(cell));
-      $(cell).css("backgroundColor", bgColor);
-    }
-  }
-
   #markImportantCells() {
     if (this.#importantCells) {
-      this.#setCellsBackgroundColor(this.#importantCells, "");
+      this.#removeImportantCellClass();
     }
     this.#importantCells = this.#getImportantCells(this.#selectedCell);
-    this.#setCellsBackgroundColor(this.#importantCells, "rgb(65, 65, 65)");
+    this.#addImportantCellClass();
+  }
+
+  #addImportantCellClass() {
+    for (const cell of this.#importantCells) {
+      $(cell).addClass("important");
+    }
+  }
+
+  #removeImportantCellClass() {
+    for (const cell of this.#importantCells) {
+      $(cell).removeClass("important");
+    }
   }
 
   #getImportantCells(cell) {
@@ -124,15 +117,16 @@ export default class SudokuGridManager {
   #resetCells() {
     for (let i = 0; i < Constants.gridSize; ++i) {
       for (let j = 0; j < Constants.gridSize; ++j) {
-        this.#grid[i][j].editable = true;
-        this.#setCellText(this.#grid[i][j].element, "");
+        const cell = this.#grid[i][j].element;
+        cell.removeClass("uneditable");
+        this.#setCellText(cell, "");
       }
     }
   }
 
   #isCellEditable(cell) {
     const position = this.#findCellPosition(cell);
-    return this.#grid[position[0]][position[1]].editable;
+    return !this.#grid[position[0]][position[1]].element.hasClass("uneditable");
   }
 
   #findCellPosition(cell) {
@@ -154,7 +148,6 @@ export default class SudokuGridManager {
         {
           element: $(cells[i]),
           value: 0,
-          editable: true,
         },
       ];
       if (i % 9 == 8) {
@@ -193,9 +186,10 @@ export default class SudokuGridManager {
     while (count !== numOfUneditableCells) {
       let i = Math.floor(Math.random() * Constants.gridSize);
       let j = Math.floor(Math.random() * Constants.gridSize);
-      if (this.#grid[i][j].editable === true) {
+      const cell = this.#grid[i][j].element;
+      if (this.#isCellEditable(cell)) {
         ++count;
-        this.#grid[i][j].editable = false;
+        cell.addClass("uneditable");
       }
     }
   }
@@ -204,9 +198,9 @@ export default class SudokuGridManager {
     for (let i = 0; i < Constants.gridSize; ++i) {
       for (let j = 0; j < Constants.gridSize; ++j) {
         const cell = this.#grid[i][j];
-        if (cell.editable === false) {
-          this.#setCellText(cell.element, cell.value);
-          cell.element.css("color", "rgb(240, 120, 140)");
+        const element = cell.element;
+        if (!this.#isCellEditable(element)) {
+          this.#setCellText(element, cell.value);
         }
       }
     }

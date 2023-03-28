@@ -23,12 +23,15 @@
   height: var(--cell-size);
   width: var(--cell-size);
   border: min(0.15vw, 0.15vh) var(--sudoku-board-border-color) solid;
+  color: rgb(200, 200, 200);
+  font-weight: 300;
 }
 
 .cell div {
   display: flex;
   justify-content: center;
   align-items: center;
+  user-select: none;
 }
 
 .row > .pencil-grid {
@@ -45,4 +48,21 @@
 .row > div:nth-child(3),
 .row > div:nth-child(6) {
   border-right: 0.4vw var(--sudoku-board-border-color) solid;
+}
+
+.selected div {
+  color: black;
+}
+
+.important {
+  background-color: rgb(65, 65, 65);
+}
+
+.selected {
+  background-color: aqua;
+  font-weight: 400;
+}
+
+.uneditable {
+  color: rgb(240, 120, 140);
 }

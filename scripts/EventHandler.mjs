@@ -1,5 +1,4 @@
 import HeaderManager from "./Header/HeaderManager.mjs";
-import Timer from "./Header/Timer.mjs";
 import SudokuGridManager from "./SudokuBoard/SudokuGridManager.mjs";
 import PencilTool from "./ToolsButtons/PencilTool.mjs";
 
@@ -56,7 +55,6 @@ export default class EventHandler {
 
   #startCallback() {
     const startButton = $("#start-button");
-    console.log(this.#gameStarted);
     if (!this.#gameStarted) {
       this.#sudokuGridManager.startGame();
       this.#headerManager.handleGameStart();
@@ -70,7 +68,7 @@ export default class EventHandler {
     }
   }
 
-  #$cells = $(".row>div");
+  #$cells = $(".cell");
   #gameStarted = false;
   #sudokuGridManager;
   #headerManager;
