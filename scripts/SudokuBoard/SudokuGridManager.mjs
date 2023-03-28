@@ -1,7 +1,7 @@
 import BoxIndexCalculator from "./BoxIndexCalculator.mjs";
 import Constants from "../common/Constants.mjs";
 import SudokuGenerator from "./SudokuGenerator.mjs";
-import PencilTool from "../ToolsButtons/PencilTool.mjs";
+import PencilTool from "./PencilTool.mjs";
 
 export default class SudokuGridManager {
   constructor(cells) {
@@ -58,15 +58,19 @@ export default class SudokuGridManager {
           }
         } else {
           this.#selectedCell.removeClass("pencil-grid");
-          this.#selectedCell.children().each(function () {
-            $(this).text("");
-          });
+          this.removeSelectedCellText();
           this.#setCellText(this.#selectedCell, key);
         }
       } else if (key === "Backspace" && !pencilActive) {
         this.#setCellText(this.#selectedCell, "");
       }
     }
+  }
+
+  removeSelectedCellText() {
+    this.#selectedCell.children().each(function () {
+      $(this).text("");
+    });
   }
 
   #markImportantCells() {

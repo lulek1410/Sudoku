@@ -1,13 +1,13 @@
 import SudokuGridManager from "../SudokuGridManager.mjs";
 import BoxIndexCalculator from "../BoxIndexCalculator.mjs";
 import SudokuGenerator from "../SudokuGenerator.mjs";
-import PencilTool from "../../ToolsButtons/PencilTool.mjs";
+import PencilTool from "../PencilTool.mjs";
 import * as fs from "fs";
 import * as path from "path";
 
 jest.mock("../SudokuGenerator");
 jest.mock("../BoxIndexCalculator");
-jest.mock("../../ToolsButtons/PencilTool");
+jest.mock("../PencilTool");
 
 describe("SudokuGridManagerTest", () => {
   const html = fs.readFileSync(path.resolve("./html/sudoku.html"), "utf8");
@@ -55,6 +55,23 @@ describe("SudokuGridManagerTest", () => {
         });
     }
   });
+
+  function expectIsPenActive(cardinality = 1) {
+    expect(PencilTool.isPencilActive).toBeCalledTimes(cardinality);
+  }
+
+  function invokeFillCellWithInput(inputKey) {
+    let event = { key: inputKey };
+    sut.fillCellWithInput(event);
+  }
+
+  function mockIsPencilActiveReturnValue(returnValue) {
+    PencilTool.isPencilActive.mockReturnValue(returnValue);
+  }
+
+  function expectTextInTestCellsSubcell(expected, subcell = 4) {
+    expect(testCell.children().eq(subcell).text()).toBe(expected);
+  }
 
   describe("selectCell", () => {
     function checkSignificantCells(expected) {
@@ -112,23 +129,6 @@ describe("SudokuGridManagerTest", () => {
   });
 
   describe("fillCellWithInput", () => {
-    function expectIsPenActive(cardinality = 1) {
-      expect(PencilTool.isPencilActive).toBeCalledTimes(cardinality);
-    }
-
-    function expectTextInTestCellsSubcell(expected, subcell = 4) {
-      expect(testCell.children().eq(subcell).text()).toBe(expected);
-    }
-
-    function invokeFillCellWithInput(inputKey) {
-      let event = { key: inputKey };
-      sut.fillCellWithInput(event);
-    }
-
-    function mockIsPencilActiveReturnValue(returnValue) {
-      PencilTool.isPencilActive.mockReturnValue(returnValue);
-    }
-
     test("do nothing when no cell selected", () => {
       invokeFillCellWithInput("4");
       expectIsPenActive();
@@ -178,6 +178,32 @@ describe("SudokuGridManagerTest", () => {
       invokeFillCellWithInput("9");
       expectTextInTestCellsSubcell("9", 8);
       expectIsPenActive(3);
+    });
+  });
+
+  describe("removeSelectedCellText", () => {
+    test("remove text without pencil inactive", () => {
+      mockIsPencilActiveReturnValue(false);
+      let event = { target: testCell };
+      sut.selectCell(event);
+      invokeFillCellWithInput("5");
+      expectIsPenActive();
+      sut.removeSelectedCellText();
+      expectTextInTestCellsSubcell("");
+    });
+
+    test("subcells text (pencil-grid)", () => {
+      mockIsPencilActiveReturnValue(true);
+      let event = { target: testCell };
+      sut.selectCell(event);
+      invokeFillCellWithInput("1");
+      invokeFillCellWithInput("7");
+      invokeFillCellWithInput("9");
+      expectIsPenActive(3);
+      sut.removeSelectedCellText();
+      expectTextInTestCellsSubcell("", 0);
+      expectTextInTestCellsSubcell("", 6);
+      expectTextInTestCellsSubcell("", 8);
     });
   });
 

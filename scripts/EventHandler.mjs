@@ -1,6 +1,6 @@
 import HeaderManager from "./Header/HeaderManager.mjs";
 import SudokuGridManager from "./SudokuBoard/SudokuGridManager.mjs";
-import PencilTool from "./ToolsButtons/PencilTool.mjs";
+import PencilTool from "./SudokuBoard/PencilTool.mjs";
 
 export default class EventHandler {
   constructor() {
@@ -46,7 +46,11 @@ export default class EventHandler {
     $("#pencil-button").on("click", function () {
       PencilTool.pencilClicked();
     });
-    $("#ereaser-button");
+    const ereaserButtonCallback =
+      this.#sudokuGridManager.removeSelectedCellText.bind(
+        this.#sudokuGridManager
+      );
+    $("#ereaser-button").on("click", ereaserButtonCallback);
   }
 
   #disableToolsInteractions() {
