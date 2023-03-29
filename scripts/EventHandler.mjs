@@ -42,7 +42,10 @@ export default class EventHandler {
   }
 
   #listenForToolsInteractions() {
-    $("#check-button");
+    const checkButtonCallback = this.#sudokuGridManager.checkSudoku.bind(
+      this.#sudokuGridManager
+    );
+    $("#check-button").on("click", checkButtonCallback);
     $("#pencil-button").on("click", function () {
       PencilTool.pencilClicked();
     });
@@ -67,6 +70,7 @@ export default class EventHandler {
       this.#gameStarted = true;
     } else {
       this.#headerManager.handleGameStop();
+      this.#disableToolsInteractions();
       this.#disableGridInteractions();
       this.#gameStarted = false;
     }

@@ -2,12 +2,14 @@ import SudokuGridManager from "../SudokuGridManager.mjs";
 import BoxIndexCalculator from "../BoxIndexCalculator.mjs";
 import SudokuGenerator from "../SudokuGenerator.mjs";
 import PencilTool from "../PencilTool.mjs";
+import MessageDisplayer from "../../Header/MessageDisplyer.mjs";
 import * as fs from "fs";
 import * as path from "path";
 
 jest.mock("../SudokuGenerator");
 jest.mock("../BoxIndexCalculator");
 jest.mock("../PencilTool");
+jest.mock("../../Header/MessageDisplyer.mjs");
 
 describe("SudokuGridManagerTest", () => {
   const html = fs.readFileSync(path.resolve("./html/sudoku.html"), "utf8");
@@ -15,6 +17,18 @@ describe("SudokuGridManagerTest", () => {
 
   const cells = $(".cell");
   let sut;
+  let sudoku = [
+    [4, 5, 6, 2, 1, 3, 7, 9, 8],
+    [7, 3, 8, 4, 9, 5, 1, 6, 2],
+    [1, 9, 2, 6, 8, 7, 3, 4, 5],
+    [2, 6, 9, 1, 7, 4, 5, 8, 3],
+    [3, 4, 1, 8, 5, 9, 2, 7, 6],
+    [5, 8, 7, 3, 6, 2, 9, 1, 4],
+    [8, 7, 4, 5, 2, 1, 6, 3, 9],
+    [9, 2, 3, 7, 4, 6, 8, 5, 1],
+    [6, 1, 5, 9, 3, 8, 4, 2, 7],
+  ];
+  const generator = new SudokuGenerator();
   const testCell = cells.eq(12);
   let significantCells = [
     cells.eq(9),
@@ -43,8 +57,9 @@ describe("SudokuGridManagerTest", () => {
     SudokuGenerator.mockClear();
     sut = new SudokuGridManager(cells);
     expect(SudokuGenerator).toBeCalledTimes(1);
+    PencilTool.isPencilActive.mockClear();
+    mockIsPencilActiveReturnValue(false);
     for (const cell of cells) {
-      PencilTool.isPencilActive.mockClear();
       $(cell).removeClass("selected");
       $(cell).removeClass("important");
       $(cell).removeClass("uneditable");
@@ -65,12 +80,36 @@ describe("SudokuGridManagerTest", () => {
     sut.fillCellWithInput(event);
   }
 
+  function invokeSelectCell(cellToSelect = testCell) {
+    sut.selectCell({ target: cellToSelect });
+  }
+
+  function mockReturnValues(func, values) {
+    for (const value of values) {
+      func.mockReturnValueOnce(value);
+    }
+  }
+
   function mockIsPencilActiveReturnValue(returnValue) {
     PencilTool.isPencilActive.mockReturnValue(returnValue);
   }
 
   function expectTextInTestCellsSubcell(expected, subcell = 4) {
     expect(testCell.children().eq(subcell).text()).toBe(expected);
+  }
+
+  function countCellsWithClass(className) {
+    let count = 0;
+    cells.each(function () {
+      if ($(this).hasClass(className)) {
+        ++count;
+      }
+    });
+    return count;
+  }
+
+  function mockSudokuGeneratorReturnValue() {
+    generator.generateSudoku.mockReturnValueOnce(sudoku);
   }
 
   describe("selectCell", () => {
@@ -91,19 +130,12 @@ describe("SudokuGridManagerTest", () => {
       expect(func).toBeCalledTimes(values.length);
     }
 
-    function mockReturnValues(func, values) {
-      for (const value of values) {
-        func.mockReturnValueOnce(value);
-      }
-    }
-
     test("cell selects", () => {
       expectSellectedCellProperties(false);
       checkSignificantCells(false);
       mockReturnValues(BoxIndexCalculator.startIndex, [0, 3]);
       mockReturnValues(BoxIndexCalculator.endIndex, [2, 5]);
-      let event = { target: testCell };
-      sut.selectCell(event);
+      invokeSelectCell();
       expectToBeCalledWith(BoxIndexCalculator.startIndex, [1, 3]);
       expectToBeCalledWith(BoxIndexCalculator.endIndex, [1, 3]);
       expect(BoxIndexCalculator.startIndex).toBeCalledTimes(2);
@@ -115,11 +147,9 @@ describe("SudokuGridManagerTest", () => {
     test("cell deselect if another selects", () => {
       mockReturnValues(BoxIndexCalculator.startIndex, [0, 3, 3, 6]);
       mockReturnValues(BoxIndexCalculator.endIndex, [2, 5, 5, 8]);
-      let event = { target: testCell };
-      sut.selectCell(event);
+      invokeSelectCell();
       const secondCell = cells[35];
-      event.target = secondCell;
-      sut.selectCell(event);
+      invokeSelectCell(secondCell);
       expectSellectedCellProperties(false, testCell);
       expectSellectedCellProperties(true, secondCell);
       significantCells.splice(7, 1); //remove cells.eq(17)
@@ -135,18 +165,14 @@ describe("SudokuGridManagerTest", () => {
     });
 
     test("numerical input", () => {
-      mockIsPencilActiveReturnValue(false);
-      let event = { target: testCell };
-      sut.selectCell(event);
+      invokeSelectCell();
       invokeFillCellWithInput("5");
       expectIsPenActive();
       expectTextInTestCellsSubcell("5");
     });
 
     test("input other than numerical does not chang cells text", () => {
-      mockIsPencilActiveReturnValue(false);
-      let event = { target: testCell };
-      sut.selectCell(event);
+      invokeSelectCell();
       invokeFillCellWithInput("Control");
       expectTextInTestCellsSubcell("");
       invokeFillCellWithInput("Enter");
@@ -157,9 +183,7 @@ describe("SudokuGridManagerTest", () => {
     });
 
     test("remove inputed value when backspace used", () => {
-      mockIsPencilActiveReturnValue(false);
-      let event = { target: testCell };
-      sut.selectCell(event);
+      invokeSelectCell();
       invokeFillCellWithInput("8");
       expectTextInTestCellsSubcell("8");
       invokeFillCellWithInput("Backspace");
@@ -169,8 +193,7 @@ describe("SudokuGridManagerTest", () => {
 
     test("input with pencil tool active", () => {
       mockIsPencilActiveReturnValue(true);
-      let event = { target: testCell };
-      sut.selectCell(event);
+      invokeSelectCell();
       invokeFillCellWithInput("1");
       expectTextInTestCellsSubcell("1", 0);
       invokeFillCellWithInput("7");
@@ -183,9 +206,7 @@ describe("SudokuGridManagerTest", () => {
 
   describe("removeSelectedCellText", () => {
     test("remove text without pencil inactive", () => {
-      mockIsPencilActiveReturnValue(false);
-      let event = { target: testCell };
-      sut.selectCell(event);
+      invokeSelectCell();
       invokeFillCellWithInput("5");
       expectIsPenActive();
       sut.removeSelectedCellText();
@@ -194,8 +215,7 @@ describe("SudokuGridManagerTest", () => {
 
     test("subcells text (pencil-grid)", () => {
       mockIsPencilActiveReturnValue(true);
-      let event = { target: testCell };
-      sut.selectCell(event);
+      invokeSelectCell();
       invokeFillCellWithInput("1");
       invokeFillCellWithInput("7");
       invokeFillCellWithInput("9");
@@ -209,27 +229,90 @@ describe("SudokuGridManagerTest", () => {
 
   describe("startGame", () => {
     test("fill grid with values and disply some of them based on difficulty", () => {
-      const generator = new SudokuGenerator();
-      const sudoku = [
-        [1, 2, 3, 4, 5, 6, 7, 8, 9],
-        [1, 2, 3, 4, 5, 6, 7, 8, 9],
-        [1, 2, 3, 4, 5, 6, 7, 8, 9],
-        [1, 2, 3, 4, 5, 6, 7, 8, 9],
-        [1, 2, 3, 4, 5, 6, 7, 8, 9],
-        [1, 2, 3, 4, 5, 6, 7, 8, 9],
-        [1, 2, 3, 4, 5, 6, 7, 8, 9],
-        [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      mockSudokuGeneratorReturnValue();
+      sut.startGame("Hard");
+      const uneditableCells = countCellsWithClass("uneditable");
+      expect(uneditableCells).toBe(20);
+    });
+  });
+
+  describe("checkSudoku", () => {
+    function fillGrid(values) {
+      for (let i = 0; i < 9; ++i) {
+        for (let j = 0; j < 9; ++j) {
+          const cell = cells.eq(i * 9 + j);
+          if (cell.children().eq(4).text() === "") {
+            invokeSelectCell(cell);
+            invokeFillCellWithInput(values[i][j]);
+          }
+        }
+      }
+    }
+
+    function testCheckSudoku(
+      numberOfEmptyCells,
+      numberOfInvalidCells,
+      cellsWithInvalidClass
+    ) {
+      sut.checkSudoku();
+      const invalidCells = countCellsWithClass("invalid");
+      expect(invalidCells).toBe(cellsWithInvalidClass);
+      expect(MessageDisplayer.displayMessage).toBeCalledTimes(1);
+      expect(MessageDisplayer.displayMessage).toBeCalledWith(
+        numberOfEmptyCells,
+        numberOfInvalidCells
+      );
+    }
+
+    beforeEach(() => {
+      sudoku = [
+        [4, 5, 6, 2, 1, 3, 7, 9, 8],
+        [7, 3, 8, 4, 9, 5, 1, 6, 2],
+        [1, 9, 2, 6, 8, 7, 3, 4, 5],
+        [2, 6, 9, 1, 7, 4, 5, 8, 3],
+        [3, 4, 1, 8, 5, 9, 2, 7, 6],
+        [5, 8, 7, 3, 6, 2, 9, 1, 4],
+        [8, 7, 4, 5, 2, 1, 6, 3, 9],
+        [9, 2, 3, 7, 4, 6, 8, 2, 1],
+        [6, 1, 5, 5, 3, 8, 4, 2, 7],
+      ];
+      MessageDisplayer.displayMessage.mockClear();
+      mockSudokuGeneratorReturnValue();
+    });
+
+    test("sudoku filled properly", () => {
+      sut.startGame("Easy");
+      fillGrid(sudoku);
+      testCheckSudoku(0, 0, 0);
+    });
+
+    test("sudoku not filled entirely", () => {
+      sut.startGame("Easy");
+      testCheckSudoku(41, 0, 41);
+    });
+
+    test("cells with pencil notes count as nsot filled", () => {
+      mockIsPencilActiveReturnValue(true);
+      sut.startGame("Easy");
+      fillGrid(sudoku);
+      testCheckSudoku(41, 0, 41);
+    });
+
+    test("sudoku filled with mistakes", () => {
+      sut.startGame("Easy");
+      sudoku = [
+        [7, 4, 3, 1, 4, 5, 2, 8, 9],
+        [6, 8, 7, 5, 4, 1, 3, 2, 9],
+        [2, 3, 5, 7, 9, 8, 4, 6, 1],
+        [6, 5, 3, 2, 8, 9, 7, 4, 1],
+        [2, 5, 3, 7, 8, 6, 5, 1, 4],
+        [2, 1, 9, 6, 5, 3, 2, 4, 2],
+        [5, 6, 7, 8, 1, 2, 5, 9, 3],
+        [6, 4, 9, 8, 7, 5, 1, 3, 2],
         [1, 2, 3, 4, 5, 6, 7, 8, 9],
       ];
-      generator.generateSudoku.mockReturnValueOnce(sudoku);
-      sut.startGame("Easy");
-      let uneditableCells = 0;
-      cells.each(function () {
-        if ($(this).hasClass("uneditable") != "") {
-          ++uneditableCells;
-        }
-      });
-      expect(uneditableCells).toBe(40);
+      fillGrid(sudoku);
+      testCheckSudoku(0, 41, 41);
     });
   });
 });

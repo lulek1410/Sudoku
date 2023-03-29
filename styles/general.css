@@ -3,7 +3,7 @@
   --bg-color-primary: rgb(50, 50, 50);
   --bg-color-secondary: rgb(30, 30, 30);
   --aquamarine: aquamarine;
-  --aquamarine-dark: rgb(127, 255, 212, 0.8);
+  --aquamarine-dark: rgb(127, 255, 212, 0.7);
   --fs-primary: min(4vw, 4vh);
   --fs-secondary: min(3vw, 3vh);
   --cell-size: min(10vw, 7vh);

@@ -1,11 +1,13 @@
 export default class PencilTool {
   static pencilClicked() {
+    console.log("click");
     let pencilButton = $("#pencil-button");
     this.#pencilActive = !this.#pencilActive;
     if (this.isPencilActive()) {
-      pencilButton.css("backgroundColor", "rgb(127, 255, 212, 0.7)");
+      console.log("change color");
+      pencilButton.addClass("button-active");
     } else {
-      pencilButton.css("backgroundColor", "aquamarine");
+      pencilButton.removeClass("button-active");
     }
   }
 

@@ -58,11 +58,16 @@
   background-color: rgb(65, 65, 65);
 }
 
+.uneditable {
+  color: rgb(240, 120, 140);
+}
+
+.invalid {
+  color: white;
+  background-color: red;
+}
+
 .selected {
   background-color: aqua;
   font-weight: 400;
-}
-
-.uneditable {
-  color: rgb(240, 120, 140);
 }
