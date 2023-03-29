@@ -63,6 +63,8 @@ describe("SudokuGridManagerTest", () => {
       $(cell).removeClass("selected");
       $(cell).removeClass("important");
       $(cell).removeClass("uneditable");
+      $(cell).removeClass("invalid");
+      $(cell).removeClass("pencil-grid");
       $(cell)
         .children()
         .each(function () {
@@ -233,6 +235,40 @@ describe("SudokuGridManagerTest", () => {
       sut.startGame("Hard");
       const uneditableCells = countCellsWithClass("uneditable");
       expect(uneditableCells).toBe(20);
+    });
+  });
+
+  describe("endGame", () => {
+    function selectEditableCell() {
+      for (let i = 0; i < 9; ++i) {
+        for (let j = 0; j < 9; ++j) {
+          const cell = cells.eq(i * 9 + j);
+          if (cell.children().eq(4).text() === "") {
+            invokeSelectCell(cell);
+            return;
+          }
+        }
+      }
+    }
+
+    test("reset every cell", () => {
+      mockIsPencilActiveReturnValue(true);
+      mockSudokuGeneratorReturnValue();
+      sut.startGame("Easy");
+      sut.checkSudoku();
+      selectEditableCell();
+      invokeFillCellWithInput(2);
+      sut.endGame();
+      const uneditableCells = countCellsWithClass("uneditable");
+      expect(uneditableCells).toBe(0);
+      const invalidCells = countCellsWithClass("invalid");
+      expect(invalidCells).toBe(0);
+      const importantCells = countCellsWithClass("important");
+      expect(importantCells).toBe(0);
+      const pencilGridCells = countCellsWithClass("pencil-grid");
+      expect(pencilGridCells).toBe(0);
+      const selectedCells = countCellsWithClass("selected");
+      expect(selectedCells).toBe(0);
     });
   });
 

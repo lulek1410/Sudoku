@@ -10,7 +10,6 @@ export default class SudokuGridManager {
   }
 
   startGame(difficulty) {
-    this.#resetCells();
     this.#initializeGridValues();
     try {
       this.#makeCellsUneditable(difficulty);
@@ -20,12 +19,28 @@ export default class SudokuGridManager {
     this.#displayUneditableCellsValue();
   }
 
+  endGame() {
+    this.#removeSelectedCellClass();
+    this.#removeImportantCellClass();
+    this.#selectedCell = undefined;
+    this.#importantCells = undefined;
+    for (let i = 0; i < Constants.gridSize; ++i) {
+      for (let j = 0; j < Constants.gridSize; ++j) {
+        const cell = this.#grid[i][j].element;
+        cell.removeClass("uneditable");
+        this.#removeInvalidClass(cell);
+        this.#removePencilGridClass(cell);
+        this.#setCellText(cell, "");
+      }
+    }
+  }
+
   selectCell(event) {
     const target = $(event.target);
     const cell = target.parent().hasClass("cell") ? target.parent() : target;
     if (this.#isCellEditable(cell)) {
       if (this.#selectedCell) {
-        this.#selectedCell.removeClass("selected");
+        this.#removeSelectedCellClass();
       }
 
       this.#selectedCell = cell;
@@ -44,7 +59,6 @@ export default class SudokuGridManager {
       if (key > 0 && key <= 9) {
         this.#removeInvalidClass();
         if (pencilActive) {
-          console.log(pencilActive);
           if (!this.#selectedCell.hasClass("pencil-grid")) {
             this.#setCellText(this.#selectedCell, "");
           }
@@ -120,9 +134,7 @@ export default class SudokuGridManager {
   }
 
   #markImportantCells() {
-    if (this.#importantCells) {
-      this.#removeImportantCellClass();
-    }
+    this.#removeImportantCellClass();
     this.#importantCells = this.#getImportantCells(this.#selectedCell);
     this.#addImportantCellClass();
   }
@@ -134,8 +146,16 @@ export default class SudokuGridManager {
   }
 
   #removeImportantCellClass() {
-    for (const cell of this.#importantCells) {
-      $(cell).removeClass("important");
+    if (this.#importantCells) {
+      for (const cell of this.#importantCells) {
+        $(cell).removeClass("important");
+      }
+    }
+  }
+
+  #removeSelectedCellClass() {
+    if (this.#selectedCell) {
+      this.#selectedCell.removeClass("selected");
     }
   }
 
@@ -162,18 +182,6 @@ export default class SudokuGridManager {
       }
     }
     return new Set([...row, ...column, ...box]);
-  }
-
-  #resetCells() {
-    for (let i = 0; i < Constants.gridSize; ++i) {
-      for (let j = 0; j < Constants.gridSize; ++j) {
-        const cell = this.#grid[i][j].element;
-        cell.removeClass("uneditable");
-        this.#removeInvalidClass(cell);
-        this.#removePencilGridClass(cell);
-        this.#setCellText(cell, "");
-      }
-    }
   }
 
   #isCellEditable(cell) {

@@ -1,14 +1,19 @@
 export default class PencilTool {
   static pencilClicked() {
     console.log("click");
-    let pencilButton = $("#pencil-button");
+    const pencilButton = $("#pencil-button");
     this.#pencilActive = !this.#pencilActive;
     if (this.isPencilActive()) {
-      console.log("change color");
       pencilButton.addClass("button-active");
     } else {
       pencilButton.removeClass("button-active");
     }
+  }
+
+  static resetPencilButton() {
+    const pencilButton = $("#pencil-button");
+    pencilButton.removeClass("button-active");
+    this.#pencilActive = false;
   }
 
   static isPencilActive() {

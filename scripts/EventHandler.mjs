@@ -57,27 +57,31 @@ export default class EventHandler {
   }
 
   #disableToolsInteractions() {
+    $("#check-button").off("click");
     $("#pencil-button").off("click");
+    $("#ereaser-button").off("click");
   }
 
   #startCallback() {
     const startButton = $("#start-button");
-    if (!this.#gameStarted) {
+    if (!this.gameStarted) {
       this.#sudokuGridManager.startGame();
       this.#headerManager.handleGameStart();
       this.#listenForGridInteractions();
       this.#listenForToolsInteractions();
-      this.#gameStarted = true;
+      this.gameStarted = true;
     } else {
+      this.#sudokuGridManager.endGame();
       this.#headerManager.handleGameStop();
+      PencilTool.resetPencilButton();
       this.#disableToolsInteractions();
       this.#disableGridInteractions();
-      this.#gameStarted = false;
+      this.gameStarted = false;
     }
   }
 
   #$cells = $(".cell");
-  #gameStarted = false;
+  gameStarted = false;
   #sudokuGridManager;
   #headerManager;
 }

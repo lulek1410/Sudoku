@@ -1,19 +1,34 @@
 import EventHandler from "../EventHandler.mjs";
 import SudokuGridManager from "../SudokuBoard/SudokuGridManager.mjs";
 import HeaderManager from "../Header/HeaderManager.mjs";
+import PencilTool from "../SudokuBoard/PencilTool.mjs";
 import * as fs from "fs";
 import * as path from "path";
 
 jest.mock("../SudokuBoard/SudokuGridManager.mjs");
 jest.mock("../Header/HeaderManager.mjs");
+jest.mock("../SudokuBoard/PencilTool.mjs");
 
 describe("EventHandlerTest", () => {
   const html = fs.readFileSync(path.resolve("./html/sudoku.html"), "utf8");
   document.body.innerHTML = html;
   const sudokuGridManager = new SudokuGridManager();
   const headerManager = new HeaderManager();
+  let sut;
 
   beforeEach(() => {
+    $("#check-button").off("click");
+    $("#pencil-button").off("click");
+    $("#ereaser-button").off("click");
+    $(".row>div").each(function () {
+      $(this).off("click");
+    });
+    $("start-button").on("click", this);
+    $("#left-arrow-button").off("click");
+    $("#right-arrow-button").off("click");
+    $("#start-button").off("click");
+    $(document).off("keyup");
+    sut = new EventHandler();
     SudokuGridManager.mockClear();
     HeaderManager.mockClear();
     headerManager.changeDifficulty.mockClear();
@@ -21,10 +36,14 @@ describe("EventHandlerTest", () => {
     sudokuGridManager.startGame.mockClear();
     sudokuGridManager.fillCellWithInput.mockClear();
     sudokuGridManager.selectCell.mockClear();
+    sudokuGridManager.checkSudoku.mockClear();
+    sudokuGridManager.removeSelectedCellText.mockClear();
+    PencilTool.pencilClicked.mockClear();
+    PencilTool.resetPencilButton.mockClear();
   });
 
   test("construct", () => {
-    const sut = new EventHandler();
+    new EventHandler();
     expect(SudokuGridManager).toBeCalledTimes(1);
     expect(SudokuGridManager).toBeCalledWith($(".row>div"));
     expect(HeaderManager).toBeCalledTimes(1);
@@ -32,6 +51,10 @@ describe("EventHandlerTest", () => {
   });
 
   describe("headerInteractions", () => {
+    beforeEach(() => {
+      $("#start-button").trigger("click");
+    });
+
     test("leftArrowButtonClick", () => {
       $("#left-arrow-button").trigger("click");
       expect(headerManager.changeDifficulty).toBeCalledTimes(1);
@@ -42,36 +65,55 @@ describe("EventHandlerTest", () => {
       expect(headerManager.changeDifficulty).toBeCalledTimes(1);
     });
 
-    test("startButtonClick", () => {
-      $("#start-button").trigger("click");
+    test("startButtonClickTwoTimes", () => {
       expect(headerManager.handleGameStart).toBeCalledTimes(1);
       expect(sudokuGridManager.startGame).toBeCalledTimes(1);
       $("#start-button").trigger("click");
       expect(headerManager.handleGameStop).toBeCalledTimes(1);
+      expect(sudokuGridManager.endGame).toBeCalledTimes(1);
+      expect(PencilTool.resetPencilButton).toBeCalledTimes(1);
     });
   });
 
   describe("gridInteractions", () => {
-    beforeAll(() => {
-      $("#start-button").trigger("click");
-    });
-
     test("cellClick", () => {
+      $("#start-button").trigger("click");
       $(".row>div").eq(40).trigger("click");
       expect(sudokuGridManager.selectCell).toBeCalledTimes(1);
     });
 
     test("keyInput", () => {
+      $("#start-button").trigger("click");
       $(document).trigger("keyup");
       expect(sudokuGridManager.fillCellWithInput).toBeCalledTimes(1);
     });
 
     test("disabled when game not started", () => {
-      $("#start-button").trigger("click");
       $(".row>div").eq(40).trigger("click");
       expect(sudokuGridManager.selectCell).toBeCalledTimes(0);
       $(document).trigger("keyup");
       expect(sudokuGridManager.fillCellWithInput).toBeCalledTimes(0);
+    });
+  });
+
+  describe("toolsButtonsInteractions", () => {
+    beforeEach(() => {
+      $("#start-button").trigger("click");
+    });
+
+    test("checkButton", () => {
+      $("#check-button").trigger("click");
+      expect(sudokuGridManager.checkSudoku).toBeCalledTimes(1);
+    });
+
+    test("pencilButton", () => {
+      $("#pencil-button").trigger("click");
+      expect(PencilTool.pencilClicked).toBeCalledTimes(1);
+    });
+
+    test("ereaserButton", () => {
+      $("#ereaser-button").trigger("click");
+      expect(sudokuGridManager.removeSelectedCellText).toBeCalledTimes(1);
     });
   });
 });
