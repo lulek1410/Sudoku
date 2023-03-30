@@ -25,6 +25,9 @@ describe("EventHandlerTest", () => {
     $(".row>div").each(function () {
       $(this).off("click");
     });
+    $("#number-buttons > button").each(function () {
+      $(this).off("click");
+    });
     $("start-button").on("click", this);
     $("#left-arrow-button").off("click");
     $("#right-arrow-button").off("click");
@@ -88,8 +91,11 @@ describe("EventHandlerTest", () => {
 
     test("keyInput", () => {
       $("#start-button").trigger("click");
-      $(document).trigger("keyup");
+      const event = $.Event("keyup");
+      event.key = 6;
+      $(document).trigger(event);
       expect(sudokuGridManager.fillCellWithInput).toBeCalledTimes(1);
+      expect(sudokuGridManager.fillCellWithInput).toBeCalledWith(event);
     });
 
     test("disabled when game not started", () => {
@@ -97,6 +103,14 @@ describe("EventHandlerTest", () => {
       expect(sudokuGridManager.selectCell).toBeCalledTimes(0);
       $(document).trigger("keyup");
       expect(sudokuGridManager.fillCellWithInput).toBeCalledTimes(0);
+    });
+  });
+
+  describe("numberButtonsInteractions", () => {
+    test("triggerDocumentKeyUpEvent", () => {
+      $("#start-button").trigger("click");
+      $("#number-buttons > button").eq(2).trigger("click");
+      expect(sudokuGridManager.fillCellWithInput).toBeCalledTimes(1);
     });
   });
 

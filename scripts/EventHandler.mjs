@@ -61,6 +61,22 @@ export default class EventHandler {
     $("#ereaser-button").on("click", ereaserButtonCallback);
   }
 
+  #listenForNumberButtonsInteractions() {
+    this.#$numberButtons.each(function () {
+      $(this).on("click", function (event) {
+        const key = +$(event.target).text();
+        const eventToTrigger = $.Event("keyup", { key: key });
+        $(document).trigger(eventToTrigger);
+      });
+    });
+  }
+
+  #disabeNumberButtonsInteractions() {
+    this.#$numberButtons.each(function () {
+      $(this).off("click");
+    });
+  }
+
   #disableToolsInteractions() {
     $("#check-button").off("click");
     $("#pencil-button").off("click");
@@ -72,6 +88,7 @@ export default class EventHandler {
       this.#sudokuGridManager.startGame();
       this.#headerManager.handleGameStart();
       this.#listenForGridInteractions();
+      this.#listenForNumberButtonsInteractions();
       this.#listenForToolsInteractions();
       this.gameStarted = true;
     } else {
@@ -86,11 +103,13 @@ export default class EventHandler {
     PencilTool.resetPencilButton();
     this.#disableToolsInteractions();
     this.#disableGridInteractions();
+    this.#disabeNumberButtonsInteractions();
     this.gameStarted = false;
   }
 
   #$cells = $(".cell");
   #$startButton = $("start-button");
+  #$numberButtons = $("#number-buttons > button");
   gameStarted = false;
   #sudokuGridManager;
   #headerManager;
