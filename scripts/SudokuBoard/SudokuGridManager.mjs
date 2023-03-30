@@ -45,7 +45,6 @@ export default class SudokuGridManager {
       if (this.#$selectedCell) {
         this.#removeSelectedCellClass();
       }
-
       this.#$selectedCell = $cell;
       this.#markImportantCells();
       this.#$selectedCell.addClass("selected");

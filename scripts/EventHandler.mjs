@@ -32,13 +32,22 @@ export default class EventHandler {
 
   #listenForHeaderInteractions() {
     this.#$startButton.on("click", this);
+    const startButtonCallback = this.#startCallback.bind(this);
+    $("#start-button").on("click", startButtonCallback);
+    this.#listenForDifficultyChangeButtonsInteractions();
+  }
+
+  #listenForDifficultyChangeButtonsInteractions() {
     const difficultyChangeCallback = this.#headerManager.changeDifficulty.bind(
       this.#headerManager
     );
-    const startButtonCallback = this.#startCallback.bind(this);
-    $("#left-arrow-button").on("click", difficultyChangeCallback);
-    $("#right-arrow-button").on("click", difficultyChangeCallback);
-    $("#start-button").on("click", startButtonCallback);
+    this.#$leftArrowButton.on("click", difficultyChangeCallback);
+    this.#$rightArrowButton.on("click", difficultyChangeCallback);
+  }
+
+  #disableDifficultyChangeButtonsInteractions() {
+    this.#$leftArrowButton.off("click");
+    this.#$rightArrowButton.off("click");
   }
 
   #listenForToolsInteractions() {
@@ -46,19 +55,19 @@ export default class EventHandler {
       this.#sudokuGridManager
     );
     const stopGameCallback = this.#stopGame.bind(this);
-    $("#check-button").on("click", function () {
+    this.#$checkButton.on("click", function () {
       if (isSudokuValidCallback()) {
         stopGameCallback();
       }
     });
-    $("#pencil-button").on("click", function () {
+    this.#$pencilButton.on("click", function () {
       PencilTool.pencilClicked();
     });
     const ereaserButtonCallback =
       this.#sudokuGridManager.removeSelectedCellText.bind(
         this.#sudokuGridManager
       );
-    $("#ereaser-button").on("click", ereaserButtonCallback);
+    this.#$ereaserButton.on("click", ereaserButtonCallback);
   }
 
   #listenForNumberButtonsInteractions() {
@@ -78,9 +87,9 @@ export default class EventHandler {
   }
 
   #disableToolsInteractions() {
-    $("#check-button").off("click");
-    $("#pencil-button").off("click");
-    $("#ereaser-button").off("click");
+    this.#$checkButton.off("click");
+    this.#$pencilButton.off("click");
+    this.#$ereaserButton.off("click");
   }
 
   #startCallback() {
@@ -90,10 +99,12 @@ export default class EventHandler {
       this.#listenForGridInteractions();
       this.#listenForNumberButtonsInteractions();
       this.#listenForToolsInteractions();
+      this.#disableDifficultyChangeButtonsInteractions();
       this.gameStarted = true;
     } else {
       this.#sudokuGridManager.endGame();
       MessageDisplayer.resetInfo();
+      this.#listenForDifficultyChangeButtonsInteractions();
       this.#stopGame();
     }
   }
@@ -107,6 +118,11 @@ export default class EventHandler {
     this.gameStarted = false;
   }
 
+  #$checkButton = $("#check-button");
+  #$pencilButton = $("#pencil-button");
+  #$ereaserButton = $("#ereaser-button");
+  #$leftArrowButton = $("#left-arrow-button");
+  #$rightArrowButton = $("#right-arrow-button")
   #$cells = $(".cell");
   #$startButton = $("start-button");
   #$numberButtons = $("#number-buttons > button");
