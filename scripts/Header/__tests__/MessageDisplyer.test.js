@@ -32,4 +32,11 @@ describe("MessageDisplauerTest", () => {
     MessageDisplayer.displayMessage(numberOfEmptyCells, numberOfMistakes);
     expect(infoField.text()).toBe(expected);
   });
+
+  test("resetInfo", () => {
+    MessageDisplayer.displayMessage(5, 0);
+    expect(infoField.text()).not.toBe("");
+    MessageDisplayer.resetInfo();
+    expect(infoField.text()).toBe("");
+  });
 });

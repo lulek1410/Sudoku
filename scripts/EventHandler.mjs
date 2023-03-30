@@ -1,6 +1,7 @@
 import HeaderManager from "./Header/HeaderManager.mjs";
 import SudokuGridManager from "./SudokuBoard/SudokuGridManager.mjs";
 import PencilTool from "./SudokuBoard/PencilTool.mjs";
+import MessageDisplayer from "./Header/MessageDisplyer.mjs";
 
 export default class EventHandler {
   constructor() {
@@ -77,6 +78,7 @@ export default class EventHandler {
       this.gameStarted = true;
     } else {
       this.#sudokuGridManager.endGame();
+      MessageDisplayer.resetInfo();
       this.#stopGame();
     }
   }

@@ -10,4 +10,8 @@ export default class MessageDisplayer {
     }
     $("#info").text(message);
   }
+
+  static resetInfo() {
+    $("#info").text("");
+  }
 }

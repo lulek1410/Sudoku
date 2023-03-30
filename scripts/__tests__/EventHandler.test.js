@@ -4,10 +4,12 @@ import HeaderManager from "../Header/HeaderManager.mjs";
 import PencilTool from "../SudokuBoard/PencilTool.mjs";
 import * as fs from "fs";
 import * as path from "path";
+import MessageDisplayer from "../Header/MessageDisplyer.mjs";
 
 jest.mock("../SudokuBoard/SudokuGridManager.mjs");
 jest.mock("../Header/HeaderManager.mjs");
 jest.mock("../SudokuBoard/PencilTool.mjs");
+jest.mock("../Header/MessageDisplyer.mjs");
 
 describe("EventHandlerTest", () => {
   const html = fs.readFileSync(path.resolve("./html/sudoku.html"), "utf8");
@@ -40,6 +42,7 @@ describe("EventHandlerTest", () => {
     sudokuGridManager.removeSelectedCellText.mockClear();
     PencilTool.pencilClicked.mockClear();
     PencilTool.resetPencilButton.mockClear();
+    MessageDisplayer.resetInfo.mockClear();
   });
 
   test("construct", () => {
@@ -72,6 +75,7 @@ describe("EventHandlerTest", () => {
       expect(headerManager.handleGameStop).toBeCalledTimes(1);
       expect(sudokuGridManager.endGame).toBeCalledTimes(1);
       expect(PencilTool.resetPencilButton).toBeCalledTimes(1);
+      expect(MessageDisplayer.resetInfo).toBeCalledTimes(1);
     });
   });
 
