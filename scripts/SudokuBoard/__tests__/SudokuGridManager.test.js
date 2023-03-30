@@ -203,6 +203,20 @@ describe("SudokuGridManagerTest", () => {
       expectTextInTestCellsSubcell("9", 8);
       expectIsPenActive(3);
     });
+
+    test("input on cell with pencil notes when pencil not active", () => {
+      mockIsPencilActiveReturnValue(true);
+      invokeSelectCell();
+      invokeFillCellWithInput("1");
+      invokeFillCellWithInput("7");
+      invokeFillCellWithInput("9");
+      mockIsPencilActiveReturnValue(false);
+      invokeFillCellWithInput("5");
+      expectTextInTestCellsSubcell("", 0);
+      expectTextInTestCellsSubcell("", 6);
+      expectTextInTestCellsSubcell("", 8);
+      expectTextInTestCellsSubcell("5", 4);
+    });
   });
 
   describe("removeSelectedCellText", () => {

@@ -41,7 +41,7 @@ header,
 .arrow-button,
 #difficulty-level,
 #timer {
-  color: var(--aquamarine);
+  color: var(--primary-color);
 }
 
 #difficulty-level {
@@ -89,12 +89,12 @@ header,
 }
 
 .arrow-button:active {
-  color: var(--aquamarine-dark);
+  color: var(--primary-color-dark);
 }
 
 #info {
   align-self: center;
-  color: rgb(255, 90, 90);
+  color: var(--secondary-color);
 }
 
 #timer {

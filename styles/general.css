@@ -2,8 +2,9 @@
   --sudoku-board-border-color: aqua;
   --bg-color-primary: rgb(50, 50, 50);
   --bg-color-secondary: rgb(30, 30, 30);
-  --aquamarine: aquamarine;
-  --aquamarine-dark: rgb(127, 255, 212, 0.7);
+  --primary-color: rgb(200, 244, 249);
+  --secondary-color: rgb(248, 56, 57);
+  --primary-color-dark: rgb(200, 244, 249, 0.8);
   --fs-primary: min(4vw, 4vh);
   --fs-secondary: min(3vw, 3vh);
   --cell-size: min(10vw, 7vh);

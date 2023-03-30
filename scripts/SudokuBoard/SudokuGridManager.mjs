@@ -68,10 +68,12 @@ export default class SudokuGridManager {
           this.#changeSelectedCellsText(key, key - 1);
         } else {
           this.#removeCellsClasses(["pencil-grid", "invalid"]);
+          this.removeSelectedCellText();
           this.#changeSelectedCellsText(key);
         }
       } else if (key === "Backspace" && !pencilActive) {
         this.#removeCellsClasses(["pencil-grid", "invalid"]);
+        this.removeSelectedCellText();
         this.#setCellText(this.#$selectedCell, "");
       }
     }

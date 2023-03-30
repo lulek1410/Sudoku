@@ -1,5 +1,5 @@
 .btn {
-  background-color: var(--aquamarine);
+  background-color: var(--primary-color);
   color: var(--bg-color-primary);
   border: none;
   cursor: pointer;
@@ -22,7 +22,7 @@
 }
 
 .btn:active {
-  background-color: var(--aquamarine-dark);
+  background-color: var(--primary-color-dark);
 }
 
 .margin2 {
@@ -34,5 +34,5 @@
 }
 
 .button-clicked {
-  background-color: var(--aquamarine-dark);
+  background-color: var(--primary-color-dark);
 }
