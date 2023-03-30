@@ -40,12 +40,9 @@ describe("HeaderManagerTest", () => {
       expected: "Medium",
     },
   ])("changeDifficulty", ({ buttonName, className, expected }) => {
-    const leftArrow = $(buttonName)[0].classList;
-    leftArrow.add(className);
-    const event = {
-      target: { classList: leftArrow },
-    };
-    sut.changeDifficulty(event);
+    const $arrowButton = $(buttonName)[0].classList;
+    $arrowButton.add(className);
+    sut.changeDifficulty({ target: { classList: $arrowButton } });
     expect($("#difficulty-level").text()).toBe(expected);
   });
 });

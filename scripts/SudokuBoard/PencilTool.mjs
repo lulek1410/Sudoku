@@ -1,18 +1,17 @@
 export default class PencilTool {
   static pencilClicked() {
     console.log("click");
-    const pencilButton = $("#pencil-button");
+    const $pencilButton = $("#pencil-button");
     this.#pencilActive = !this.#pencilActive;
     if (this.isPencilActive()) {
-      pencilButton.addClass("button-active");
+      $pencilButton.addClass("button-clicked");
     } else {
-      pencilButton.removeClass("button-active");
+      $pencilButton.removeClass("button-clicked");
     }
   }
 
   static resetPencilButton() {
-    const pencilButton = $("#pencil-button");
-    pencilButton.removeClass("button-active");
+    $("#pencil-button").removeClass("button-clicked");
     this.#pencilActive = false;
   }
 

@@ -33,6 +33,6 @@
   margin: 0 1vw 0 1vw;
 }
 
-.button-active {
+.button-clicked {
   background-color: var(--aquamarine-dark);
 }

@@ -15,7 +15,7 @@ describe("SudokuGridManagerTest", () => {
   const html = fs.readFileSync(path.resolve("./html/sudoku.html"), "utf8");
   document.body.innerHTML = html;
 
-  const cells = $(".cell");
+  const $cells = $(".cell");
   let sut;
   let sudoku = [
     [4, 5, 6, 2, 1, 3, 7, 9, 8],
@@ -29,37 +29,37 @@ describe("SudokuGridManagerTest", () => {
     [6, 1, 5, 9, 3, 8, 4, 2, 7],
   ];
   const generator = new SudokuGenerator();
-  const testCell = cells.eq(12);
-  let significantCells = [
-    cells.eq(9),
-    cells.eq(10),
-    cells.eq(11),
-    cells.eq(13),
-    cells.eq(14),
-    cells.eq(15),
-    cells.eq(16),
-    cells.eq(17),
-    cells.eq(3),
-    cells.eq(21),
-    cells.eq(30),
-    cells.eq(39),
-    cells.eq(48),
-    cells.eq(57),
-    cells.eq(66),
-    cells.eq(75),
-    cells.eq(4),
-    cells.eq(5),
-    cells.eq(22),
-    cells.eq(23),
+  const $testCell = $cells.eq(12);
+  let $significantCells = [
+    $cells.eq(9),
+    $cells.eq(10),
+    $cells.eq(11),
+    $cells.eq(13),
+    $cells.eq(14),
+    $cells.eq(15),
+    $cells.eq(16),
+    $cells.eq(17),
+    $cells.eq(3),
+    $cells.eq(21),
+    $cells.eq(30),
+    $cells.eq(39),
+    $cells.eq(48),
+    $cells.eq(57),
+    $cells.eq(66),
+    $cells.eq(75),
+    $cells.eq(4),
+    $cells.eq(5),
+    $cells.eq(22),
+    $cells.eq(23),
   ];
 
   beforeEach(() => {
     SudokuGenerator.mockClear();
-    sut = new SudokuGridManager(cells);
+    sut = new SudokuGridManager($cells);
     expect(SudokuGenerator).toBeCalledTimes(1);
     PencilTool.isPencilActive.mockClear();
     mockIsPencilActiveReturnValue(false);
-    for (const cell of cells) {
+    for (const cell of $cells) {
       $(cell).removeClass("selected");
       $(cell).removeClass("important");
       $(cell).removeClass("uneditable");
@@ -78,11 +78,10 @@ describe("SudokuGridManagerTest", () => {
   }
 
   function invokeFillCellWithInput(inputKey) {
-    let event = { key: inputKey };
-    sut.fillCellWithInput(event);
+    sut.fillCellWithInput({ key: inputKey });
   }
 
-  function invokeSelectCell(cellToSelect = testCell) {
+  function invokeSelectCell(cellToSelect = $testCell) {
     sut.selectCell({ target: cellToSelect });
   }
 
@@ -97,12 +96,12 @@ describe("SudokuGridManagerTest", () => {
   }
 
   function expectTextInTestCellsSubcell(expected, subcell = 4) {
-    expect(testCell.children().eq(subcell).text()).toBe(expected);
+    expect($testCell.children().eq(subcell).text()).toBe(expected);
   }
 
   function countCellsWithClass(className) {
     let count = 0;
-    cells.each(function () {
+    $cells.each(function () {
       if ($(this).hasClass(className)) {
         ++count;
       }
@@ -116,12 +115,12 @@ describe("SudokuGridManagerTest", () => {
 
   describe("selectCell", () => {
     function checkSignificantCells(expected) {
-      for (const cell of significantCells) {
+      for (const cell of $significantCells) {
         expect(cell.hasClass("important")).toBe(expected);
       }
     }
 
-    function expectSellectedCellProperties(expected, selectedCell = testCell) {
+    function expectSellectedCellProperties(expected, selectedCell = $testCell) {
       expect($(selectedCell).hasClass("selected")).toBe(expected);
     }
 
@@ -150,12 +149,12 @@ describe("SudokuGridManagerTest", () => {
       mockReturnValues(BoxIndexCalculator.startIndex, [0, 3, 3, 6]);
       mockReturnValues(BoxIndexCalculator.endIndex, [2, 5, 5, 8]);
       invokeSelectCell();
-      const secondCell = cells[35];
+      const secondCell = $cells[35];
       invokeSelectCell(secondCell);
-      expectSellectedCellProperties(false, testCell);
+      expectSellectedCellProperties(false, $testCell);
       expectSellectedCellProperties(true, secondCell);
-      significantCells.splice(7, 1); //remove cells.eq(17)
-      significantCells.splice(9, 1); //remove cells.eq(30)
+      $significantCells.splice(7, 1); //remove cells.eq(17)
+      $significantCells.splice(9, 1); //remove cells.eq(30)
       checkSignificantCells(false);
     });
   });
@@ -242,9 +241,9 @@ describe("SudokuGridManagerTest", () => {
     function selectEditableCell() {
       for (let i = 0; i < 9; ++i) {
         for (let j = 0; j < 9; ++j) {
-          const cell = cells.eq(i * 9 + j);
-          if (cell.children().eq(4).text() === "") {
-            invokeSelectCell(cell);
+          const $cell = $cells.eq(i * 9 + j);
+          if ($cell.children().eq(4).text() === "") {
+            invokeSelectCell($cell);
             return;
           }
         }
@@ -276,9 +275,9 @@ describe("SudokuGridManagerTest", () => {
     function fillGrid(values) {
       for (let i = 0; i < 9; ++i) {
         for (let j = 0; j < 9; ++j) {
-          const cell = cells.eq(i * 9 + j);
-          if (cell.children().eq(4).text() === "") {
-            invokeSelectCell(cell);
+          const $cell = $cells.eq(i * 9 + j);
+          if ($cell.children().eq(4).text() === "") {
+            invokeSelectCell($cell);
             invokeFillCellWithInput(values[i][j]);
           }
         }

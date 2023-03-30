@@ -5,10 +5,10 @@ import * as path from "path";
 describe("MessageDisplauerTest", () => {
   const html = fs.readFileSync(path.resolve("./html/sudoku.html"), "utf8");
   document.body.innerHTML = html;
-  const infoField = $("#info");
+  const $infoField = $("#info");
 
   beforeEach(() => {
-    infoField.text("");
+    $infoField.text("");
   });
 
   test.each([
@@ -28,15 +28,15 @@ describe("MessageDisplauerTest", () => {
       expected: "You won! Congratulations!",
     },
   ])("displayMessage", ({ numberOfEmptyCells, numberOfMistakes, expected }) => {
-    expect(infoField.text()).toBe("");
+    expect($infoField.text()).toBe("");
     MessageDisplayer.displayMessage(numberOfEmptyCells, numberOfMistakes);
-    expect(infoField.text()).toBe(expected);
+    expect($infoField.text()).toBe(expected);
   });
 
   test("resetInfo", () => {
     MessageDisplayer.displayMessage(5, 0);
-    expect(infoField.text()).not.toBe("");
+    expect($infoField.text()).not.toBe("");
     MessageDisplayer.resetInfo();
-    expect(infoField.text()).toBe("");
+    expect($infoField.text()).toBe("");
   });
 });
