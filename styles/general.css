@@ -36,23 +36,6 @@ button {
   margin: 0;
 }
 
-.btn {
-  background-color: var(--aquamarine);
-  color: var(--bg-color-primary);
-  border: none;
-  cursor: pointer;
-  transition: box-shadow 0.1s, scale 0.1s;
-}
-
-.btn:hover {
-  scale: 1.1;
-  box-shadow: 0.2vw 0.2vh 1vw black;
-}
-
-.btn:active {
-  background-color: var(--aquamarine-dark);
-}
-
 .center-text {
   text-align: center;
 }
