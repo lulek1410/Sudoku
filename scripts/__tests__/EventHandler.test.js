@@ -36,7 +36,7 @@ describe("EventHandlerTest", () => {
     sudokuGridManager.startGame.mockClear();
     sudokuGridManager.fillCellWithInput.mockClear();
     sudokuGridManager.selectCell.mockClear();
-    sudokuGridManager.checkSudoku.mockClear();
+    sudokuGridManager.isSudokuValid.mockClear();
     sudokuGridManager.removeSelectedCellText.mockClear();
     PencilTool.pencilClicked.mockClear();
     PencilTool.resetPencilButton.mockClear();
@@ -103,7 +103,7 @@ describe("EventHandlerTest", () => {
 
     test("checkButton", () => {
       $("#check-button").trigger("click");
-      expect(sudokuGridManager.checkSudoku).toBeCalledTimes(1);
+      expect(sudokuGridManager.isSudokuValid).toBeCalledTimes(1);
     });
 
     test("pencilButton", () => {

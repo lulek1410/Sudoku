@@ -255,7 +255,7 @@ describe("SudokuGridManagerTest", () => {
       mockIsPencilActiveReturnValue(true);
       mockSudokuGeneratorReturnValue();
       sut.startGame("Easy");
-      sut.checkSudoku();
+      sut.isSudokuValid();
       selectEditableCell();
       invokeFillCellWithInput(2);
       sut.endGame();
@@ -290,7 +290,8 @@ describe("SudokuGridManagerTest", () => {
       numberOfInvalidCells,
       cellsWithInvalidClass
     ) {
-      sut.checkSudoku();
+      const expected = cellsWithInvalidClass === 0;
+      expect(sut.isSudokuValid()).toBe(expected);
       const invalidCells = countCellsWithClass("invalid");
       expect(invalidCells).toBe(cellsWithInvalidClass);
       expect(MessageDisplayer.displayMessage).toBeCalledTimes(1);

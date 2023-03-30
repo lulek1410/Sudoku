@@ -86,7 +86,7 @@ export default class SudokuGridManager {
     }
   }
 
-  checkSudoku() {
+  isSudokuValid() {
     let mistakeCells = [];
     let emptyCells = [];
     for (let i = 0; i < Constants.gridSize; ++i) {
@@ -101,14 +101,11 @@ export default class SudokuGridManager {
         }
       }
     }
-    const numOfEmptyCells = emptyCells.length;
-    const numOfMistakes = mistakeCells.length;
-    if (numOfEmptyCells != 0) {
-      this.#makeCellsInvalid(emptyCells);
-    } else if (numOfMistakes !== 0) {
-      this.#makeCellsInvalid(mistakeCells);
+    this.#handleSudokuCheck(emptyCells, mistakeCells);
+    if(emptyCells.length !== 0 || mistakeCells.length !== 0){
+      return false;
     }
-    MessageDisplayer.displayMessage(numOfEmptyCells, numOfMistakes);
+    return true;
   }
 
   removeSelectedCellText() {
@@ -117,6 +114,17 @@ export default class SudokuGridManager {
     this.#selectedCell.children().each(function () {
       $(this).text("");
     });
+  }
+
+  #handleSudokuCheck(emptyCells, mistakeCells) {
+    const numOfEmptyCells = emptyCells.length;
+    const numOfMistakes = mistakeCells.length;
+    if (numOfEmptyCells != 0) {
+      this.#makeCellsInvalid(emptyCells);
+    } else if (numOfMistakes !== 0) {
+      this.#makeCellsInvalid(mistakeCells);
+    }
+    MessageDisplayer.displayMessage(numOfEmptyCells, numOfMistakes);
   }
 
   #removePencilGridClass(cell = this.#selectedCell) {

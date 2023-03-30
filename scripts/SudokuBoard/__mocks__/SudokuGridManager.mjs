@@ -1,7 +1,7 @@
 const mockStartGame = jest.fn();
 const mockSelectCell = jest.fn();
 const mockFillCellWithInput = jest.fn();
-const mockCheckSudoku = jest.fn();
+const mockIsSudokuValid = jest.fn();
 const mockEndGame = jest.fn();
 const mockRemoveSelectedCellText = jest.fn();
 const SudokuGridManager = jest.fn().mockImplementation(() => {
@@ -10,7 +10,7 @@ const SudokuGridManager = jest.fn().mockImplementation(() => {
     endGame: mockEndGame,
     selectCell: mockSelectCell,
     fillCellWithInput: mockFillCellWithInput,
-    checkSudoku: mockCheckSudoku,
+    isSudokuValid: mockIsSudokuValid,
     removeSelectedCellText: mockRemoveSelectedCellText,
   };
 });

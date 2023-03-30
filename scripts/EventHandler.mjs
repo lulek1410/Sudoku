@@ -42,10 +42,15 @@ export default class EventHandler {
   }
 
   #listenForToolsInteractions() {
-    const checkButtonCallback = this.#sudokuGridManager.checkSudoku.bind(
+    const isSudokuValidCallback = this.#sudokuGridManager.isSudokuValid.bind(
       this.#sudokuGridManager
     );
-    $("#check-button").on("click", checkButtonCallback);
+    const stopGameCallback = this.#stopGame.bind(this);
+    $("#check-button").on("click", function () {
+      if (isSudokuValidCallback()) {
+        stopGameCallback();
+      }
+    });
     $("#pencil-button").on("click", function () {
       PencilTool.pencilClicked();
     });
@@ -72,12 +77,16 @@ export default class EventHandler {
       this.gameStarted = true;
     } else {
       this.#sudokuGridManager.endGame();
-      this.#headerManager.handleGameStop();
-      PencilTool.resetPencilButton();
-      this.#disableToolsInteractions();
-      this.#disableGridInteractions();
-      this.gameStarted = false;
+      this.#stopGame();
     }
+  }
+
+  #stopGame() {
+    this.#headerManager.handleGameStop();
+    PencilTool.resetPencilButton();
+    this.#disableToolsInteractions();
+    this.#disableGridInteractions();
+    this.gameStarted = false;
   }
 
   #$cells = $(".cell");
