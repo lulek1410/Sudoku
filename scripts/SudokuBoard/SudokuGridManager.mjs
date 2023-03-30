@@ -27,9 +27,10 @@ export default class SudokuGridManager {
     for (let i = 0; i < Constants.gridSize; ++i) {
       for (let j = 0; j < Constants.gridSize; ++j) {
         const cell = this.#grid[i][j].element;
-        cell.removeClass("uneditable");
-        this.#removeInvalidClass(cell);
-        this.#removePencilGridClass(cell);
+        this.#removeCellsClasses(
+          ["pencil-grid", "invalid", "uneditable"],
+          cell
+        );
         this.#setCellText(cell, "");
       }
     }
@@ -37,7 +38,9 @@ export default class SudokuGridManager {
 
   selectCell(event) {
     const $target = $(event.target);
-    const $cell = $target.parent().hasClass("cell") ? $target.parent() : $target;
+    const $cell = $target.parent().hasClass("cell")
+      ? $target.parent()
+      : $target;
     if (this.#isCellEditable($cell)) {
       if (this.#$selectedCell) {
         this.#removeSelectedCellClass();
@@ -57,30 +60,19 @@ export default class SudokuGridManager {
     }
     if (this.#isCellEditable(this.#$selectedCell)) {
       if (key > 0 && key <= 9) {
-        this.#removeInvalidClass();
+        this.#removeCellsClasses(["invalid"]);
         if (pencilActive) {
           if (!this.#$selectedCell.hasClass("pencil-grid")) {
             this.#setCellText(this.#$selectedCell, "");
           }
           this.#$selectedCell.addClass("pencil-grid");
-          if (
-            this.#$selectedCell
-              .children()
-              .eq(key - 1)
-              .text() == ""
-          ) {
-            this.#setCellText(this.#$selectedCell, key, key - 1);
-          } else {
-            this.#setCellText(this.#$selectedCell, "", key - 1);
-          }
+          this.#changeSelectedCellsText(key, key - 1);
         } else {
-          this.#removePencilGridClass();
-          this.removeSelectedCellText();
-          this.#setCellText(this.#$selectedCell, key);
+          this.#removeCellsClasses(["pencil-grid", "invalid"]);
+          this.#changeSelectedCellsText(key);
         }
       } else if (key === "Backspace" && !pencilActive) {
-        this.#removePencilGridClass();
-        this.#removeInvalidClass();
+        this.#removeCellsClasses(["pencil-grid", "invalid"]);
         this.#setCellText(this.#$selectedCell, "");
       }
     }
@@ -93,7 +85,7 @@ export default class SudokuGridManager {
       for (let j = 0; j < Constants.gridSize; ++j) {
         const cell = this.#grid[i][j];
         const element = cell.element;
-        const elementContent = element.children().eq(4).text();
+        const elementContent = this.#getCellTextContent(element);
         if (elementContent === "" || element.hasClass("pencil-grid")) {
           emptyCells.push(element);
         } else if (elementContent !== cell.value.toString()) {
@@ -102,18 +94,31 @@ export default class SudokuGridManager {
       }
     }
     this.#handleSudokuCheck(emptyCells, mistakeCells);
-    if(emptyCells.length !== 0 || mistakeCells.length !== 0){
+    if (emptyCells.length !== 0 || mistakeCells.length !== 0) {
       return false;
     }
     return true;
   }
 
   removeSelectedCellText() {
-    this.#removePencilGridClass();
-    this.#removeInvalidClass();
+    this.#removeCellsClasses(["pencil-grid", "invalid"]);
     this.#$selectedCell.children().each(function () {
       $(this).text("");
     });
+  }
+
+  #changeSelectedCellsText(key, childNumber = 4) {
+    if (this.#getCellTextContent(this.#$selectedCell, childNumber) === "") {
+      this.#setCellText(this.#$selectedCell, key, childNumber);
+    } else {
+      this.#setCellText(this.#$selectedCell, "", childNumber);
+    }
+  }
+
+  #removeCellsClasses(classes, cell = this.#$selectedCell) {
+    for (const classToRemove of classes) {
+      cell.removeClass(classToRemove);
+    }
   }
 
   #handleSudokuCheck(emptyCells, mistakeCells) {
@@ -127,12 +132,8 @@ export default class SudokuGridManager {
     MessageDisplayer.displayMessage(numOfEmptyCells, numOfMistakes);
   }
 
-  #removePencilGridClass(cell = this.#$selectedCell) {
-    cell.removeClass("pencil-grid");
-  }
-
-  #removeInvalidClass(cell = this.#$selectedCell) {
-    cell.removeClass("invalid");
+  #getCellTextContent(cell, childNumber = 4) {
+    return cell.children().eq(childNumber).text();
   }
 
   #makeCellsInvalid(cellsArray) {
