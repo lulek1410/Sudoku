@@ -6,7 +6,7 @@
 
 .row:nth-child(3),
 .row:nth-child(6) {
-  border-bottom: 0.4vw var(--sudoku-board-border-color) solid;
+  border-bottom: 0.3vw var(--sudoku-board-border-color) solid;
 }
 
 .row {
@@ -23,7 +23,7 @@
   align-items: center;
   height: var(--cell-size);
   width: var(--cell-size);
-  border: min(0.15vw, 0.15vh) var(--sudoku-board-border-color) solid;
+  border: min(0.15vw, 0.15vh) rgb(0, 255, 255, 0.4) solid;
   color: rgb(200, 200, 200);
   font-weight: 300;
 }
@@ -48,7 +48,7 @@
 
 .row > div:nth-child(3),
 .row > div:nth-child(6) {
-  border-right: 0.4vw var(--sudoku-board-border-color) solid;
+  border-right: 0.3vw var(--sudoku-board-border-color) solid;
 }
 
 .selected div {
