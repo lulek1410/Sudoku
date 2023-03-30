@@ -6,7 +6,7 @@ import MessageDisplayer from "./Header/MessageDisplyer.mjs";
 export default class EventHandler {
   constructor() {
     this.#sudokuGridManager = new SudokuGridManager(this.#$cells);
-    this.#headerManager = new HeaderManager(this.#$startButton);
+    this.#headerManager = new HeaderManager();
     this.#listenForHeaderInteractions(this.#$startButton);
   }
 
@@ -31,9 +31,8 @@ export default class EventHandler {
   }
 
   #listenForHeaderInteractions() {
-    this.#$startButton.on("click", this);
     const startButtonCallback = this.#startCallback.bind(this);
-    $("#start-button").on("click", startButtonCallback);
+    this.#$startButton.on("click", startButtonCallback);
     this.#listenForDifficultyChangeButtonsInteractions();
   }
 
@@ -122,9 +121,9 @@ export default class EventHandler {
   #$pencilButton = $("#pencil-button");
   #$ereaserButton = $("#ereaser-button");
   #$leftArrowButton = $("#left-arrow-button");
-  #$rightArrowButton = $("#right-arrow-button")
+  #$rightArrowButton = $("#right-arrow-button");
   #$cells = $(".cell");
-  #$startButton = $("start-button");
+  #$startButton = $("#start-button");
   #$numberButtons = $("#number-buttons > button");
   gameStarted = false;
   #sudokuGridManager;
