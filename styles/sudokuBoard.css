@@ -65,7 +65,7 @@
 
 .invalid {
   color: white;
-  background-color: var(--secondary-color);
+  background-color: var(--secondary-color-dark);
 }
 
 .selected {
