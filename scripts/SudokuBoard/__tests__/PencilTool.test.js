@@ -8,7 +8,6 @@ describe("PencilToolTest", () => {
   const $pencilButton = $("#pencil-button");
 
   test("pencilClicked", () => {
-    console.log(PencilTool.pencilButton == $pencilButton);
     expect(PencilTool.isPencilActive()).toBe(false);
     PencilTool.pencilClicked();
     expect($pencilButton.hasClass("button-clicked")).toBe(true);

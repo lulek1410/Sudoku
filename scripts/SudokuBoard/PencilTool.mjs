@@ -1,6 +1,5 @@
 export default class PencilTool {
   static pencilClicked() {
-    console.log("click");
     const $pencilButton = $("#pencil-button");
     this.#pencilActive = !this.#pencilActive;
     if (this.isPencilActive()) {

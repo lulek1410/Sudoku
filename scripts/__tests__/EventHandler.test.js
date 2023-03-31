@@ -12,7 +12,7 @@ jest.mock("../SudokuBoard/PencilTool.mjs");
 jest.mock("../Header/MessageDisplyer.mjs");
 
 describe("EventHandlerTest", () => {
-  const html = fs.readFileSync(path.resolve("./html/sudoku.html"), "utf8");
+  const html = fs.readFileSync(path.resolve("./index.html"), "utf8");
   document.body.innerHTML = html;
   const sudokuGridManager = new SudokuGridManager();
   const headerManager = new HeaderManager();
@@ -75,7 +75,6 @@ describe("EventHandlerTest", () => {
     });
 
     test("startButtonClickTwoTimes", () => {
-      console.log(startButton[0]);
       startButton.trigger("click");
       expect(headerManager.handleGameStart).toBeCalledTimes(1);
       expect(sudokuGridManager.startGame).toBeCalledTimes(1);
