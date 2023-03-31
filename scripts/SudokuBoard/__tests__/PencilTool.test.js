@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 describe("PencilToolTest", () => {
-  const html = fs.readFileSync(path.resolve("./html/index.html"), "utf8");
+  const html = fs.readFileSync(path.resolve("./html/sudoku.html"), "utf8");
   document.body.innerHTML = html;
   const $pencilButton = $("#pencil-button");
 

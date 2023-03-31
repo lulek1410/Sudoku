@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 describe("MessageDisplauerTest", () => {
-  const html = fs.readFileSync(path.resolve("./html/index.html"), "utf8");
+  const html = fs.readFileSync(path.resolve("./html/sudoku.html"), "utf8");
   document.body.innerHTML = html;
   const $infoField = $("#info");
 

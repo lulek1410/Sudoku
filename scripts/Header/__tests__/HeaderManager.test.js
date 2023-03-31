@@ -6,7 +6,7 @@ import Timer from "../Timer.mjs";
 jest.mock("../Timer.mjs");
 
 describe("HeaderManagerTest", () => {
-  const html = fs.readFileSync(path.resolve("./html/index.html"), "utf8");
+  const html = fs.readFileSync(path.resolve("./html/sudoku.html"), "utf8");
   document.body.innerHTML = html;
   const sut = new HeaderManager();
 
