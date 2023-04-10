@@ -202,7 +202,7 @@ export default class SudokuGridManager {
   #findCellPosition(cell) {
     for (let i = 0; i < Constants.gridSize; ++i) {
       for (let j = 0; j < Constants.gridSize; ++j) {
-        if (this.#grid[i][j].element.get(0) == cell.get(0)) {
+        if (this.#grid[i][j].element.get(0) === cell.get(0)) {
           return [i, j];
         }
       }
@@ -250,7 +250,7 @@ export default class SudokuGridManager {
         numOfUneditableCells = 20;
         break;
       default:
-        throw new Error("Difficulty setting not recognised");
+        throw new Error(`Difficulty setting not recognised : ${difficulty}`);
     }
     let count = 0;
     while (count !== numOfUneditableCells) {
@@ -262,6 +262,22 @@ export default class SudokuGridManager {
         cell.addClass("uneditable");
       }
     }
+  }
+
+  #sudokuHasOnlyOneSolution() {
+    const sudoku = this.#grid;
+    for (let i = 0; i < Constants.gridSize; ++i) {
+      for (let j = 0; j < Constants.gridSize; ++j) {
+        const cell = this.#grid[i][j].element;
+        console.log("A");
+        if (!this.#isCellEditable(cell)) {
+          sudoku[i][j] = 0;
+        }
+      }
+    }
+    const matrix = SudokuToOptionsMatrixConverter.createOptionsMatrix(sudoku);
+    console.log(new Dlx().solve(matrix, 2).length);
+    return new Dlx().solve(matrix, 2).length === 1;
   }
 
   #displayUneditableCellsValue() {

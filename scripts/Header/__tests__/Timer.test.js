@@ -3,7 +3,7 @@ import * as path from "path";
 import Timer from "../Timer.mjs";
 
 describe("TimerTest", () => {
-  const html = fs.readFileSync(path.resolve("./index.html"), "utf8");
+  const html = fs.readFileSync(path.resolve("./html/sudoku.html"), "utf8");
   document.body.innerHTML = html;
   jest.useFakeTimers();
   jest.spyOn(global, "setInterval");

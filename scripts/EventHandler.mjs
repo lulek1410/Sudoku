@@ -93,7 +93,7 @@ export default class EventHandler {
 
   #startCallback() {
     if (!this.gameStarted) {
-      this.#sudokuGridManager.startGame();
+      this.#sudokuGridManager.startGame($("#difficulty-level").text());
       this.#headerManager.handleGameStart();
       this.#listenForGridInteractions();
       this.#listenForNumberButtonsInteractions();
