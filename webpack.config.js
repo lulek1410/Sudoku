@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const path = require("path");
 const packageJson = require("./package.json");
@@ -16,8 +17,14 @@ module.exports = {
   target: ["web", "es5"],
   stats: { children: true },
   plugins: [
+    new CopyWebpackPlugin({
+      patterns: [
+        { context: "./html", from: "*.html" },
+        { context: "./styles", from: "*.css", to: "styles" },
+      ],
+    }),
     new HtmlWebpackPlugin({
-      template: "./html/sudoku.html",
+      template: "./html/index.html",
     }),
     new CleanWebpackPlugin(),
   ],

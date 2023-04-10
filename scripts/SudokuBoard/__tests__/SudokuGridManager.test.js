@@ -12,7 +12,7 @@ jest.mock("../PencilTool");
 jest.mock("../../Header/MessageDisplyer.mjs");
 
 describe("SudokuGridManagerTest", () => {
-  const html = fs.readFileSync(path.resolve("./html/sudoku.html"), "utf8");
+  const html = fs.readFileSync(path.resolve("./html/index.html"), "utf8");
   document.body.innerHTML = html;
 
   const $cells = $(".cell");
