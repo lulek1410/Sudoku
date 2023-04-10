@@ -1,0 +1,12 @@
+#number-buttons {
+  margin-top: 3vh;
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+}
+
+@media (pointer: coarse) {
+  #number-buttons {
+    position: static;
+  }
+}

@@ -1,0 +1,104 @@
+header {
+  display: flex;
+  padding: 1vh 2vw 1vh 2vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+header,
+#start-button,
+.arrow-button,
+.difficulty-setting {
+  font-size: var(--fs-secondary);
+}
+
+header,
+.arrow-button {
+  background-color: var(--bg-color-secondary);
+}
+
+.left-side-header {
+  display: flex;
+  flex: 1;
+}
+
+#start-button {
+  color: var(--bg-color-primary);
+  font-weight: 700;
+  padding: 0.7vh 2vw 0.7vh 2vw;
+  border-radius: min(2vw, 2vh);
+}
+
+.difficulty-setting {
+  display: flex;
+  text-align: center;
+  width: min(16vw, 16vh);
+  margin: 0 0 0 2vw;
+}
+
+.arrow-button,
+#difficulty-level,
+#timer {
+  color: var(--primary-color);
+}
+
+#difficulty-level {
+  flex: 1;
+}
+
+.fadeInRight {
+  animation: 0.1s ease 0s fadeInRight;
+}
+
+@keyframes fadeInRight {
+  from {
+    transform: translateX(20%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.fadeInLeft {
+  animation: 0.1s linear 0s fadeInLeft;
+}
+
+@keyframes fadeInLeft {
+  from {
+    transform: translateX(-20%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.arrow-button {
+  cursor: pointer;
+  border: none;
+  transition: color 0.1s;
+}
+
+.arrow-button:hover {
+  scale: 1.1;
+}
+
+.arrow-button:active {
+  color: var(--primary-color-dark);
+}
+
+#info {
+  align-self: center;
+  color: var(--secondary-color);
+}
+
+#timer {
+  display: flex;
+  flex: 1;
+  justify-content: end;
+}

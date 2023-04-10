@@ -1,0 +1,38 @@
+.btn {
+  background-color: var(--primary-color);
+  color: var(--bg-color-primary);
+  border: none;
+  cursor: pointer;
+  transition: box-shadow 0.1s, scale 0.1s;
+}
+
+.round-button {
+  border-radius: min(5vw, 4vh);
+  height: var(--cell-size);
+  width: var(--cell-size);
+  font-size: var(--fs-primary);
+  font-weight: 600;
+}
+
+@media (pointer: fine) {
+  .btn:hover {
+    scale: 1.05;
+    box-shadow: 0.2vw 0.2vh 1vw black;
+  }
+}
+
+.btn:active {
+  background-color: var(--primary-color-dark);
+}
+
+.margin2 {
+  margin: 0 2vw 0 2vw;
+}
+
+.margin1 {
+  margin: 0 1vw 0 1vw;
+}
+
+.button-clicked {
+  background-color: var(--primary-color-dark);
+}
