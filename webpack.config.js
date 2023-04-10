@@ -12,19 +12,18 @@ module.exports = {
   output: {
     path: BUILD_FOLDER,
     filename: "bundle.js",
-    publicPath: "",
   },
   target: ["web", "es5"],
   stats: { children: true },
   plugins: [
     new CopyWebpackPlugin({
       patterns: [
-        { context: "./html", from: "*.html" },
         { context: "./styles", from: "*.css", to: "styles" },
       ],
     }),
     new HtmlWebpackPlugin({
       template: "./html/index.html",
+      version: packageJson.version,
     }),
     new CleanWebpackPlugin(),
   ],
@@ -35,23 +34,7 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
-          options: {
-            presets: ["@babel/preset-env"],
-          },
         },
-      },
-      {
-        test: /\\.css$/,
-        use: [
-          "style-loader",
-          {
-            loader: "css-loader",
-            options: {
-              importLoaders: 1,
-              modules: true,
-            },
-          },
-        ],
       },
     ],
   },
