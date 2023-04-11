@@ -6,7 +6,7 @@
   --primary-color-dark: rgb(200, 244, 249, 0.8);
   --secondary-color: rgb(248, 56, 57);
   --secondary-color-dark: rgb(248, 56, 57, 0.3);
-  --fs-primary: min(4vw, 4vh);
+  --fs-primary: min(5.6vw, 4vh);
   --fs-secondary: min(3vw, 3vh);
   --cell-size: min(10vw, 7vh);
 }
