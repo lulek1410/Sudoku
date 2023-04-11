@@ -17,9 +17,7 @@ module.exports = {
   stats: { children: true },
   plugins: [
     new CopyWebpackPlugin({
-      patterns: [
-        { context: "./styles", from: "*.css", to: "styles" },
-      ],
+      patterns: [{ context: "./styles", from: "*.css", to: "styles" }],
     }),
     new HtmlWebpackPlugin({
       template: "./html/index.html",
@@ -38,8 +36,11 @@ module.exports = {
       },
     ],
   },
-  devtool: "source-map",
   devServer: {
-    contentBase: BUILD_FOLDER,
+    static: BUILD_FOLDER,
+    compress: true,
+    port: 8080,
+    open: true,
   },
+  devtool: "source-map"
 };

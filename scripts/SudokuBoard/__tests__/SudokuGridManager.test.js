@@ -55,9 +55,11 @@ describe("SudokuGridManagerTest", () => {
 
   beforeEach(() => {
     SudokuGenerator.mockClear();
+    PencilTool.isPencilActive.mockClear();
+    BoxIndexCalculator.startIndex.mockClear();
+    BoxIndexCalculator.endIndex.mockClear();
     sut = new SudokuGridManager($cells);
     expect(SudokuGenerator).toBeCalledTimes(1);
-    PencilTool.isPencilActive.mockClear();
     mockIsPencilActiveReturnValue(false);
     for (const cell of $cells) {
       $(cell).removeClass("selected");

@@ -264,22 +264,6 @@ export default class SudokuGridManager {
     }
   }
 
-  #sudokuHasOnlyOneSolution() {
-    const sudoku = this.#grid;
-    for (let i = 0; i < Constants.gridSize; ++i) {
-      for (let j = 0; j < Constants.gridSize; ++j) {
-        const cell = this.#grid[i][j].element;
-        console.log("A");
-        if (!this.#isCellEditable(cell)) {
-          sudoku[i][j] = 0;
-        }
-      }
-    }
-    const matrix = SudokuToOptionsMatrixConverter.createOptionsMatrix(sudoku);
-    console.log(new Dlx().solve(matrix, 2).length);
-    return new Dlx().solve(matrix, 2).length === 1;
-  }
-
   #displayUneditableCellsValue() {
     for (let i = 0; i < Constants.gridSize; ++i) {
       for (let j = 0; j < Constants.gridSize; ++j) {
