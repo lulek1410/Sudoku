@@ -137,7 +137,10 @@ export default class SudokuGridManager {
 
   #makeCellsInvalid(cellsPositions) {
     cellsPositions.forEach((cellPosition) => {
-      this.#grid[cellPosition[0]][cellPosition[1]].element.addClass("invalid");
+      const element = this.#grid[cellPosition[0]][cellPosition[1]].element;
+      if (this.#elementIsEditable(element)) {
+        element.addClass("invalid");
+      }
     });
   }
 
@@ -194,7 +197,13 @@ export default class SudokuGridManager {
 
   #isCellEditable(cell) {
     const position = this.#findCellPosition(cell);
-    return !this.#grid[position[0]][position[1]].element.hasClass("uneditable");
+    return this.#elementIsEditable(
+      this.#grid[position[0]][position[1]].element
+    );
+  }
+
+  #elementIsEditable(element) {
+    return !element.hasClass("uneditable");
   }
 
   #findCellPosition(cell) {
@@ -254,10 +263,10 @@ export default class SudokuGridManager {
     while (count !== numOfUneditableCells) {
       let i = Math.floor(Math.random() * Constants.gridSize);
       let j = Math.floor(Math.random() * Constants.gridSize);
-      const cell = this.#grid[i][j].element;
-      if (this.#isCellEditable(cell)) {
+      const element = this.#grid[i][j].element;
+      if (this.#elementIsEditable(element)) {
         ++count;
-        cell.addClass("uneditable");
+        element.addClass("uneditable");
       }
     }
   }
@@ -267,7 +276,7 @@ export default class SudokuGridManager {
       for (let j = 0; j < Constants.gridSize; ++j) {
         const cell = this.#grid[i][j];
         const element = cell.element;
-        if (!this.#isCellEditable(element)) {
+        if (!this.#elementIsEditable(element)) {
           this.#setCellText(element, cell.value);
         }
       }

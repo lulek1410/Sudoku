@@ -9,7 +9,7 @@ export default function findInvalidCells(sudoku) {
     for (let j = 0; j < Constants.gridSize; j++) {
       if (!sudoku[i][j]) {
         emptyCells.push([i, j]);
-      } else if (!cellChecker.isCellValid(i, j, sudoku[i][j])) {
+      } else if (!cellChecker.isCellValid(sudoku, { row: i, col: j }, sudoku[i][j])) {
         mistakeCells.push([i, j]);
       }
     }

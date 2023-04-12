@@ -20,20 +20,20 @@ export default class EventHandler {
 
     const fillCellWitInputCallback =
       this.#sudokuGridManager.fillCellWithInput.bind(this.#sudokuGridManager);
-    $(document).on("keyup", fillCellWitInputCallback);
+    this.#$document.on("keyup", fillCellWitInputCallback);
   }
 
   #disableGridInteractions() {
     this.#$cells.each(function () {
       $(this).off("click");
     });
-    $(document).off("keyup");
+    this.#$document.off("keyup");
   }
 
   #listenForVisibilityChange() {
     const pauseCallback = this.#headerManager.handleGamePause;
     const resumeCallback = this.#headerManager.handleGameResume;
-    $(document).on("visibilitychange", function (e) {
+    this.#$document.on("visibilitychange", function (e) {
       if (e.target.visibilityState === "hidden") {
         pauseCallback();
       } else {
@@ -43,7 +43,7 @@ export default class EventHandler {
   }
 
   #disableVisibilityChangeListener() {
-    $(document).off("visibilitychange");
+    this.#$document.off("visibilitychange");
   }
 
   #listenForHeaderInteractions() {
@@ -135,6 +135,7 @@ export default class EventHandler {
     this.gameStarted = false;
   }
 
+  #$document = $(document);
   #$checkButton = $("#check-button");
   #$pencilButton = $("#pencil-button");
   #$ereaserButton = $("#ereaser-button");
