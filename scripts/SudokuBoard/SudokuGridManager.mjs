@@ -86,9 +86,12 @@ export default class SudokuGridManager {
         const element = cell.element;
         const elementText = this.#getCellText(element);
         if (element.hasClass("pencil-grid") || elementText === "") {
-          return 0;
+          return { value: 0, editable: true };
         }
-        return +elementText;
+        return {
+          value: +elementText,
+          editable: this.#isElementEditable(element),
+        };
       });
     });
     let { mistakeCells, emptyCells } = findInvalidCells(sudoku);
@@ -137,10 +140,7 @@ export default class SudokuGridManager {
 
   #makeCellsInvalid(cellsPositions) {
     cellsPositions.forEach((cellPosition) => {
-      const element = this.#grid[cellPosition[0]][cellPosition[1]].element;
-      if (this.#elementIsEditable(element)) {
-        element.addClass("invalid");
-      }
+      this.#grid[cellPosition[0]][cellPosition[1]].element.addClass("invalid");
     });
   }
 
@@ -197,12 +197,12 @@ export default class SudokuGridManager {
 
   #isCellEditable(cell) {
     const position = this.#findCellPosition(cell);
-    return this.#elementIsEditable(
+    return this.#isElementEditable(
       this.#grid[position[0]][position[1]].element
     );
   }
 
-  #elementIsEditable(element) {
+  #isElementEditable(element) {
     return !element.hasClass("uneditable");
   }
 
@@ -264,7 +264,7 @@ export default class SudokuGridManager {
       let i = Math.floor(Math.random() * Constants.gridSize);
       let j = Math.floor(Math.random() * Constants.gridSize);
       const element = this.#grid[i][j].element;
-      if (this.#elementIsEditable(element)) {
+      if (this.#isElementEditable(element)) {
         ++count;
         element.addClass("uneditable");
       }
@@ -276,7 +276,7 @@ export default class SudokuGridManager {
       for (let j = 0; j < Constants.gridSize; ++j) {
         const cell = this.#grid[i][j];
         const element = cell.element;
-        if (!this.#elementIsEditable(element)) {
+        if (!this.#isElementEditable(element)) {
           this.#setCellText(element, cell.value);
         }
       }

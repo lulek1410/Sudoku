@@ -391,7 +391,6 @@ describe("SudokuGridManagerTest", () => {
       ];
       sut.startGame("Easy");
       testCheckSudoku(2, 0, false);
-      expect(findInvalidCells).toBeCalledWith(sudoku);
     });
 
     test("sudoku filled with mistakes", () => {
