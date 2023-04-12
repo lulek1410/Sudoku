@@ -3,13 +3,16 @@ import CellValidityChecker from "./CellValidityChecker.mjs";
 
 export default function findInvalidCells(sudoku) {
   const cellChecker = new CellValidityChecker(sudoku);
-  const invalidCellsPosition = [];
+  const mistakeCells = [];
+  const emptyCells = [];
   for (let i = 0; i < Constants.gridSize; i++) {
     for (let j = 0; j < Constants.gridSize; j++) {
-      if (!cellChecker.isCellValid(i, j, sudoku[i][j])) {
-        invalidCellsPosition.push([i, j]);
+      if (!sudoku[i][j]) {
+        emptyCells.push([i, j]);
+      } else if (!cellChecker.isCellValid(i, j, sudoku[i][j])) {
+        mistakeCells.push([i, j]);
       }
     }
   }
-  return invalidCellsPosition;
+  return { mistakeCells: mistakeCells, emptyCells: emptyCells };
 }

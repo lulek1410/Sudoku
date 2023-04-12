@@ -83,25 +83,15 @@ export default class SudokuGridManager {
   isSudokuValid() {
     const sudoku = this.#grid.map((row) => {
       return row.map((cell) => {
-        const elementText = this.#getCellText(cell.element);
-        if (elementText === "") {
-          return 0;
-        }
-        return elementText;
-      });
-    });
-    let mistakeCells = findInvalidCells(sudoku);
-    let emptyCells = [];
-    for (let i = 0; i < Constants.gridSize; ++i) {
-      for (let j = 0; j < Constants.gridSize; ++j) {
-        const cell = this.#grid[i][j];
         const element = cell.element;
         const elementText = this.#getCellText(element);
-        if (elementText === "" || element.hasClass("pencil-grid")) {
-          emptyCells.push(element);
+        if (element.hasClass("pencil-grid") || elementText === "") {
+          return 0;
         }
-      }
-    }
+        return +elementText;
+      });
+    });
+    let { mistakeCells, emptyCells } = findInvalidCells(sudoku);
     this.#handleSudokuCheck(emptyCells, mistakeCells);
     if (emptyCells.length !== 0 || mistakeCells.length !== 0) {
       return false;
@@ -145,9 +135,9 @@ export default class SudokuGridManager {
     return cell.children().eq(childNumber).text();
   }
 
-  #makeCellsInvalid(cellsArray) {
-    cellsArray.forEach((cell) => {
-      $(cell).addClass("invalid");
+  #makeCellsInvalid(cellsPositions) {
+    cellsPositions.forEach((cellPosition) => {
+      this.#grid[cellPosition[0]][cellPosition[1]].element.addClass("invalid");
     });
   }
 
