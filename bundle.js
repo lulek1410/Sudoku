@@ -49,6 +49,7 @@ var _disabeNumberButtonsInteractions = /*#__PURE__*/new WeakSet();
 var _disableToolsInteractions = /*#__PURE__*/new WeakSet();
 var _startCallback = /*#__PURE__*/new WeakSet();
 var _stopGame = /*#__PURE__*/new WeakSet();
+var _$document = /*#__PURE__*/new WeakMap();
 var _$checkButton = /*#__PURE__*/new WeakMap();
 var _$pencilButton = /*#__PURE__*/new WeakMap();
 var _$ereaserButton = /*#__PURE__*/new WeakMap();
@@ -74,6 +75,10 @@ var EventHandler = /*#__PURE__*/_createClass(function EventHandler() {
   _classPrivateMethodInitSpec(this, _listenForVisibilityChange);
   _classPrivateMethodInitSpec(this, _disableGridInteractions);
   _classPrivateMethodInitSpec(this, _listenForGridInteractions);
+  _classPrivateFieldInitSpec(this, _$document, {
+    writable: true,
+    value: $(document)
+  });
   _classPrivateFieldInitSpec(this, _$checkButton, {
     writable: true,
     value: $("#check-button")
@@ -125,28 +130,31 @@ function _listenForGridInteractions2() {
     $(this).on("click", selectCellCallback);
   });
   var fillCellWitInputCallback = _classPrivateFieldGet(this, _sudokuGridManager).fillCellWithInput.bind(_classPrivateFieldGet(this, _sudokuGridManager));
-  $(document).on("keyup", fillCellWitInputCallback);
+  _classPrivateFieldGet(this, _$document).on("keyup", fillCellWitInputCallback);
 }
 function _disableGridInteractions2() {
   _classPrivateFieldGet(this, _$cells).each(function () {
     $(this).off("click");
   });
-  $(document).off("keyup");
+  _classPrivateFieldGet(this, _$document).off("keyup");
 }
 function _listenForVisibilityChange2() {
   var pauseCallback = _classPrivateFieldGet(this, _headerManager).handleGamePause;
   var resumeCallback = _classPrivateFieldGet(this, _headerManager).handleGameResume;
-  $(document).on("visibilitychange", function (e) {
-    console.log("AAAAAAAAA");
+  console.log("AAAAAAAAA");
+  _classPrivateFieldGet(this, _$document).on("visibilitychange", function (e) {
+    console.log("BBBBBBB");
     if (e.target.visibilityState === "hidden") {
       pauseCallback();
+      console.log("CCCCCCCC");
     } else {
       resumeCallback();
+      console.log("DDDDDDDDD");
     }
   });
 }
 function _disableVisibilityChangeListener2() {
-  $(document).off("visibilitychange");
+  _classPrivateFieldGet(this, _$document).off("visibilitychange");
 }
 function _listenForHeaderInteractions2() {
   var startButtonCallback = _classPrivateMethodGet(this, _startCallback, _startCallback2).bind(this);
