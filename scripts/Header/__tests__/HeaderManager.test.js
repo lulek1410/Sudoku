@@ -11,6 +11,10 @@ describe("HeaderManagerTest", () => {
   const sut = new HeaderManager();
 
   beforeEach(() => {
+    sut.handleGameStop();
+    Timer.startTimer.mockClear();
+    Timer.pauseTimer.mockClear();
+    Timer.stopTimer.mockClear();
     $("#difficulty-level").text("Easy");
   });
 
@@ -21,7 +25,18 @@ describe("HeaderManagerTest", () => {
     expect($("#start-button").text()).toBe("Stop");
   });
 
+  test("handleGamePause", () => {
+    sut.handleGamePause();
+    expect(Timer.pauseTimer).toBeCalledTimes(1);
+  });
+
+  test("handleGameResume", () => {
+    sut.handleGameResume();
+    expect(Timer.startTimer).toBeCalledTimes(1);
+  });
+
   test("handleGameEnd", () => {
+    sut.handleGameStart();
     expect($("#start-button").text()).toBe("Stop");
     sut.handleGameStop();
     expect(Timer.stopTimer).toBeCalledTimes(1);

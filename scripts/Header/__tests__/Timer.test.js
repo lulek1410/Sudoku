@@ -9,6 +9,12 @@ describe("TimerTest", () => {
   jest.spyOn(global, "setInterval");
   jest.spyOn(global, "clearInterval");
 
+  beforeEach(() => {
+    Timer.stopTimer();
+    clearInterval.mockClear();
+    setInterval.mockClear();
+  });
+
   test("startTimer", () => {
     Timer.startTimer();
     jest.advanceTimersByTime(73000);
@@ -17,7 +23,22 @@ describe("TimerTest", () => {
   });
 
   test("stopTimer", () => {
+    Timer.startTimer();
+    jest.advanceTimersByTime(73000);
     Timer.stopTimer();
     expect(clearInterval).toBeCalledTimes(1);
+  });
+
+  test("pauseTimer", () => {
+    Timer.startTimer();
+    jest.advanceTimersByTime(13000);
+    expect($("#timer").text()).toBe("00:13");
+    Timer.pauseTimer();
+    expect(clearInterval).toBeCalledTimes(1);
+    jest.advanceTimersByTime(23000);
+    expect($("#timer").text()).toBe("00:13");
+    Timer.startTimer();
+    jest.advanceTimersByTime(13000);
+    expect($("#timer").text()).toBe("00:26");
   });
 });

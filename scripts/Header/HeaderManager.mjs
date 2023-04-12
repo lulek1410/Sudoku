@@ -6,6 +6,14 @@ export default class HeaderManager {
     $("#start-button").text("Stop");
   }
 
+  handleGamePause() {
+    Timer.pauseTimer();
+  }
+
+  handleGameResume() {
+    Timer.startTimer();
+  }
+
   handleGameStop() {
     $("#start-button").text("Start");
     Timer.stopTimer();

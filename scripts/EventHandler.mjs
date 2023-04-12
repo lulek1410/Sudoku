@@ -30,6 +30,22 @@ export default class EventHandler {
     $(document).off("keyup");
   }
 
+  #listenForVisibilityChange() {
+    const pauseCallback = this.#headerManager.handleGamePause;
+    const resumeCallback = this.#headerManager.handleGameResume;
+    $(document).on("visibilitychange", function (e) {
+      if (e.target.visibilityState === "hidden") {
+        pauseCallback();
+      } else {
+        resumeCallback();
+      }
+    });
+  }
+
+  #disableVisibilityChangeListener() {
+    $(document).off("visibilitychange");
+  }
+
   #listenForHeaderInteractions() {
     const startButtonCallback = this.#startCallback.bind(this);
     this.#$startButton.on("click", startButtonCallback);
@@ -98,12 +114,14 @@ export default class EventHandler {
       this.#listenForGridInteractions();
       this.#listenForNumberButtonsInteractions();
       this.#listenForToolsInteractions();
+      this.#listenForVisibilityChange();
       this.#disableDifficultyChangeButtonsInteractions();
       this.gameStarted = true;
     } else {
       this.#sudokuGridManager.endGame();
       MessageDisplayer.resetInfo();
       this.#listenForDifficultyChangeButtonsInteractions();
+      this.#disableVisibilityChangeListener();
       this.#stopGame();
     }
   }
