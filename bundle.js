@@ -137,6 +137,7 @@ function _listenForVisibilityChange2() {
   var pauseCallback = _classPrivateFieldGet(this, _headerManager).handleGamePause;
   var resumeCallback = _classPrivateFieldGet(this, _headerManager).handleGameResume;
   $(document).on("visibilitychange", function (e) {
+    console.log("AAAAAAAAA");
     if (e.target.visibilityState === "hidden") {
       pauseCallback();
     } else {
