@@ -1,5 +1,6 @@
 import BoxIndexCalculator from "./BoxIndexCalculator.mjs";
 import Constants from "../common/Constants.mjs";
+import CellValidityChecker from "./CellValidityChecker.mjs";
 
 export default class SudokuGenerator {
   generateSudoku() {
@@ -29,27 +30,19 @@ export default class SudokuGenerator {
   #fillBox(rowStart, colStart) {
     for (let i = 0; i < Constants.boxSize; ++i) {
       for (let j = 0; j < Constants.boxSize; ++j) {
-        let number = 0;
+        let num = 0;
+        const position = { row: rowStart + i, col: colStart + j };
         while (true) {
-          number = Math.floor(Math.random() * Constants.gridSize + 1);
-          if (this.#unUsedInBox(rowStart, colStart, number)) {
+          num = Math.floor(Math.random() * Constants.gridSize + 1);
+          if (
+            this.#cellValidityChecker.isCellValid(this.#sudoku, position, num)
+          ) {
             break;
           }
         }
-        this.#sudoku[rowStart + i][colStart + j] = number;
+        this.#sudoku[position.row][position.col] = num;
       }
     }
-  }
-
-  #unUsedInBox(rowStart, colStart, num) {
-    for (let i = 0; i < Constants.boxSize; i++) {
-      for (let j = 0; j < Constants.boxSize; j++) {
-        if (this.#sudoku[rowStart + i][colStart + j] == num) {
-          return false;
-        }
-      }
-    }
-    return true;
   }
 
   #fillRemaining(row, column) {
@@ -62,51 +55,22 @@ export default class SudokuGenerator {
       column = 0;
     }
 
-    if (this.#sudoku[row][column] !== 0) {
-      return this.#fillRemaining(row, column + 1);
+    const position = { row: row, col: column };
+    if (this.#sudoku[position.row][position.col] !== 0) {
+      return this.#fillRemaining(position.row, position.col + 1);
     }
-
     for (let num = 1; num <= Constants.gridSize; num++) {
-      if (this.#isValid(row, column, num)) {
-        this.#sudoku[row][column] = num;
-        if (this.#fillRemaining(row, column + 1)) {
+      if (this.#cellValidityChecker.isCellValid(this.#sudoku, position, num)) {
+        this.#sudoku[position.row][position.col] = num;
+        if (this.#fillRemaining(position.row, position.col + 1)) {
           return true;
         }
-        this.#sudoku[row][column] = 0;
+        this.#sudoku[position.row][position.col] = 0;
       }
     }
     return false;
   }
 
-  #isValid(row, column, number) {
-    return (
-      this.#unUsedInColumn(column, number) &&
-      this.#unUsedInRow(row, number) &&
-      this.#unUsedInBox(
-        BoxIndexCalculator.startIndex(row),
-        BoxIndexCalculator.startIndex(column),
-        number
-      )
-    );
-  }
-
-  #unUsedInRow(row, num) {
-    for (let j = 0; j < Constants.gridSize; j++) {
-      if (this.#sudoku[row][j] === num) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  #unUsedInColumn(column, num) {
-    for (let i = 0; i < Constants.gridSize; i++) {
-      if (this.#sudoku[i][column] === num) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   #sudoku = [];
+  #cellValidityChecker = new CellValidityChecker();
 }

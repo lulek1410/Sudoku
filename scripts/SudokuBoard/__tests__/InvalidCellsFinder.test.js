@@ -1,8 +1,7 @@
-import { escapeSelector } from "jquery";
 import findInvalidCells from "../InvalidCellsFinder.mjs";
-import SudokuCellValidityChecker from "../SudokuCellValidityChecker.mjs";
+import CellValidityChecker from "../CellValidityChecker.mjs";
 
-jest.mock("../SudokuCellValidityChecker");
+jest.mock("../CellValidityChecker");
 
 describe("InvalidCellsFinder", () => {
   let sudoku = [
@@ -17,15 +16,15 @@ describe("InvalidCellsFinder", () => {
     [6, 1, 5, 9, 3, 8, 4, 2, 7],
   ];
 
-  const sudokuCellValidityChecker = new SudokuCellValidityChecker();
+  const cellValidityChecker = new CellValidityChecker();
 
   beforeEach(() => {
-    SudokuCellValidityChecker.mockClear();
+    CellValidityChecker.mockClear();
   });
 
   function mockIsCellValidReturnValue(expected, count = 81) {
     for (let i = 0; i < count; ++i) {
-      sudokuCellValidityChecker.isCellValid.mockReturnValueOnce(expected);
+      cellValidityChecker.isCellValid.mockReturnValueOnce(expected);
     }
   }
 
@@ -33,8 +32,8 @@ describe("InvalidCellsFinder", () => {
     test("All cells valid", () => {
       mockIsCellValidReturnValue(true);
       expect(findInvalidCells(sudoku)).toStrictEqual([]);
-      expect(SudokuCellValidityChecker).toBeCalledTimes(1);
-      expect(SudokuCellValidityChecker).toBeCalledWith(sudoku);
+      expect(CellValidityChecker).toBeCalledTimes(1);
+      expect(CellValidityChecker).toBeCalledWith(sudoku);
     });
 
     test("Some cells are invalid", () => {
@@ -48,8 +47,8 @@ describe("InvalidCellsFinder", () => {
         [4, 6],
         [7, 0],
       ]);
-      expect(SudokuCellValidityChecker).toBeCalledTimes(1);
-      expect(SudokuCellValidityChecker).toBeCalledWith(sudoku);
+      expect(CellValidityChecker).toBeCalledTimes(1);
+      expect(CellValidityChecker).toBeCalledWith(sudoku);
     });
   });
 });

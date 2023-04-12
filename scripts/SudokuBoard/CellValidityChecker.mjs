@@ -1,13 +1,9 @@
 import BoxIndexCalculator from "./BoxIndexCalculator.mjs";
 import Constants from "../common/Constants.mjs";
 
-export default class SudokuCellValidityChecker {
-  constructor(sudoku) {
+export default class CellValidityChecker {
+  isCellValid(sudoku, position, number = sudoku[position.row][position.col]) {
     this.#sudoku = sudoku;
-  }
-
-  isCellValid(row, column, number = this.#sudoku[row][column]) {
-    const position = { row: row, col: column };
     return (
       this.#unUsedInColumn(position, number) &&
       this.#unUsedInRow(position, number) &&
@@ -54,5 +50,5 @@ export default class SudokuCellValidityChecker {
     return true;
   }
 
-  #sudoku;
+  #sudoku = null;
 }

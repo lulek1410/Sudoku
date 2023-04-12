@@ -3,6 +3,7 @@ import Constants from "../common/Constants.mjs";
 import SudokuGenerator from "./SudokuGenerator.mjs";
 import PencilTool from "./PencilTool.mjs";
 import MessageDisplayer from "../Header/MessageDisplyer.mjs";
+import findInvalidCells from "./InvalidCellsFinder.mjs";
 
 export default class SudokuGridManager {
   constructor(cells) {
@@ -80,17 +81,24 @@ export default class SudokuGridManager {
   }
 
   isSudokuValid() {
-    let mistakeCells = [];
+    const sudoku = this.#grid.map((row) => {
+      return row.map((cell) => {
+        const elementText = this.#getCellText(cell.element);
+        if (elementText === "") {
+          return 0;
+        }
+        return elementText;
+      });
+    });
+    let mistakeCells = findInvalidCells(sudoku);
     let emptyCells = [];
     for (let i = 0; i < Constants.gridSize; ++i) {
       for (let j = 0; j < Constants.gridSize; ++j) {
         const cell = this.#grid[i][j];
         const element = cell.element;
-        const elementContent = this.#getCellTextContent(element);
-        if (elementContent === "" || element.hasClass("pencil-grid")) {
+        const elementText = this.#getCellText(element);
+        if (elementText === "" || element.hasClass("pencil-grid")) {
           emptyCells.push(element);
-        } else if (elementContent !== cell.value.toString()) {
-          mistakeCells.push(element);
         }
       }
     }
@@ -109,7 +117,7 @@ export default class SudokuGridManager {
   }
 
   #changeSelectedCellsText(key, childNumber = 4) {
-    if (this.#getCellTextContent(this.#$selectedCell, childNumber) === "") {
+    if (this.#getCellText(this.#$selectedCell, childNumber) === "") {
       this.#setCellText(this.#$selectedCell, key, childNumber);
     } else {
       this.#setCellText(this.#$selectedCell, "", childNumber);
@@ -133,7 +141,7 @@ export default class SudokuGridManager {
     MessageDisplayer.displayMessage(numOfEmptyCells, numOfMistakes);
   }
 
-  #getCellTextContent(cell, childNumber = 4) {
+  #getCellText(cell, childNumber = 4) {
     return cell.children().eq(childNumber).text();
   }
 

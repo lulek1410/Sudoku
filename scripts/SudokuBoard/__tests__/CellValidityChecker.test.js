@@ -1,5 +1,5 @@
 import BoxIndexCalculator from "../BoxIndexCalculator.mjs";
-import SudokuCellValidityChecker from "../SudokuCellValidityChecker.mjs";
+import CellValidityChecker from "../CellValidityChecker.mjs";
 
 jest.mock("../BoxIndexCalculator");
 
@@ -55,6 +55,8 @@ describe("SudokuGridManagerTest", () => {
     [6, 1, 5, 9, 3, 8, 4, 7, 7],
   ];
 
+  const sut = new CellValidityChecker();
+
   describe("isCellValid", () => {
     test.each([
       { sudoku: sudokuValid, position: { row: 1, col: 5 }, expected: true },
@@ -64,10 +66,9 @@ describe("SudokuGridManagerTest", () => {
         expected: false,
       },
     ])("cell is valid", ({ sudoku, position, expected }) => {
-      const sut = new SudokuCellValidityChecker(sudoku);
       BoxIndexCalculator.startIndex.mockReturnValueOnce(0);
       BoxIndexCalculator.startIndex.mockReturnValueOnce(3);
-      expect(sut.isCellValid(position.row, position.col)).toBe(expected);
+      expect(sut.isCellValid(sudoku, position)).toBe(expected);
       expect(BoxIndexCalculator.startIndex).toBeCalledTimes(2);
       expect(BoxIndexCalculator.startIndex).toBeCalledWith(position.row);
       expect(BoxIndexCalculator.startIndex).toBeCalledWith(position.col);
@@ -77,10 +78,9 @@ describe("SudokuGridManagerTest", () => {
       { sudoku: sudokuInvalidRow, position: { row: 6, col: 2 } },
       { sudoku: sudokuInvalidColumn, position: { row: 4, col: 7 } },
     ])("cell not valid - row/column", ({ sudoku, position }) => {
-      const sut = new SudokuCellValidityChecker(sudoku);
       BoxIndexCalculator.startIndex.mockReturnValueOnce(6);
       BoxIndexCalculator.startIndex.mockReturnValueOnce(0);
-      expect(sut.isCellValid(position.row, position.col)).toBe(false);
+      expect(sut.isCellValid(sudoku, position)).toBe(false);
       expect(BoxIndexCalculator.startIndex).toBeCalledTimes(0);
     });
   });

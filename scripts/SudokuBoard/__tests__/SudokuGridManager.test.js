@@ -1,15 +1,18 @@
 import SudokuGridManager from "../SudokuGridManager.mjs";
+import * as fs from "fs";
+import * as path from "path";
+
 import BoxIndexCalculator from "../BoxIndexCalculator.mjs";
 import SudokuGenerator from "../SudokuGenerator.mjs";
 import PencilTool from "../PencilTool.mjs";
 import MessageDisplayer from "../../Header/MessageDisplyer.mjs";
-import * as fs from "fs";
-import * as path from "path";
+import findInvalidCells from "../InvalidCellsFinder.mjs";
 
 jest.mock("../SudokuGenerator");
 jest.mock("../BoxIndexCalculator");
 jest.mock("../PencilTool");
 jest.mock("../../Header/MessageDisplyer.mjs");
+jest.mock("../InvalidCellsFinder.mjs");
 
 describe("SudokuGridManagerTest", () => {
   const html = fs.readFileSync(path.resolve("./html/index.html"), "utf8");
@@ -58,6 +61,7 @@ describe("SudokuGridManagerTest", () => {
     PencilTool.isPencilActive.mockClear();
     BoxIndexCalculator.startIndex.mockClear();
     BoxIndexCalculator.endIndex.mockClear();
+    findInvalidCells.mockClear();
     sut = new SudokuGridManager($cells);
     expect(SudokuGenerator).toBeCalledTimes(1);
     mockIsPencilActiveReturnValue(false);
@@ -270,6 +274,7 @@ describe("SudokuGridManagerTest", () => {
       mockIsPencilActiveReturnValue(true);
       mockSudokuGeneratorReturnValue();
       sut.startGame("Easy");
+      findInvalidCells.mockReturnValueOnce([]);
       sut.isSudokuValid();
       selectEditableCell();
       invokeFillCellWithInput(2);
@@ -307,8 +312,6 @@ describe("SudokuGridManagerTest", () => {
     ) {
       const expected = cellsWithInvalidClass === 0;
       expect(sut.isSudokuValid()).toBe(expected);
-      const invalidCells = countCellsWithClass("invalid");
-      expect(invalidCells).toBe(cellsWithInvalidClass);
       expect(MessageDisplayer.displayMessage).toBeCalledTimes(1);
       expect(MessageDisplayer.displayMessage).toBeCalledWith(
         numberOfEmptyCells,
@@ -325,46 +328,54 @@ describe("SudokuGridManagerTest", () => {
         [3, 4, 1, 8, 5, 9, 2, 7, 6],
         [5, 8, 7, 3, 6, 2, 9, 1, 4],
         [8, 7, 4, 5, 2, 1, 6, 3, 9],
-        [9, 2, 3, 7, 4, 6, 8, 2, 1],
-        [6, 1, 5, 5, 3, 8, 4, 2, 7],
+        [9, 2, 3, 7, 4, 6, 8, 5, 1],
+        [6, 1, 5, 9, 3, 8, 4, 2, 7],
       ];
       MessageDisplayer.displayMessage.mockClear();
       mockSudokuGeneratorReturnValue();
     });
 
     test("sudoku filled properly", () => {
+      findInvalidCells.mockReturnValueOnce([]);
       sut.startGame("Easy");
       fillGrid(sudoku);
       testCheckSudoku(0, 0, 0);
     });
 
     test("sudoku not filled entirely", () => {
+      findInvalidCells.mockReturnValueOnce([]);
       sut.startGame("Easy");
       testCheckSudoku(41, 0, 41);
     });
 
-    test("cells with pencil notes count as nsot filled", () => {
+    test("cells with pencil notes count as not filled", () => {
       mockIsPencilActiveReturnValue(true);
+      findInvalidCells.mockReturnValueOnce([]);
       sut.startGame("Easy");
       fillGrid(sudoku);
       testCheckSudoku(41, 0, 41);
     });
 
     test("sudoku filled with mistakes", () => {
+      findInvalidCells.mockReturnValueOnce([
+        [0, 0],
+        [2, 2],
+        [4, 6],
+      ]);
       sut.startGame("Easy");
       sudoku = [
-        [7, 4, 3, 1, 4, 5, 2, 8, 9],
-        [6, 8, 7, 5, 4, 1, 3, 2, 9],
-        [2, 3, 5, 7, 9, 8, 4, 6, 1],
-        [6, 5, 3, 2, 8, 9, 7, 4, 1],
-        [2, 5, 3, 7, 8, 6, 5, 1, 4],
-        [2, 1, 9, 6, 5, 3, 2, 4, 2],
-        [5, 6, 7, 8, 1, 2, 5, 9, 3],
-        [6, 4, 9, 8, 7, 5, 1, 3, 2],
-        [1, 2, 3, 4, 5, 6, 7, 8, 9],
+        [7, 5, 6, 2, 1, 3, 7, 9, 8],
+        [7, 3, 8, 4, 9, 5, 1, 6, 2],
+        [1, 9, 9, 6, 8, 7, 3, 4, 5],
+        [2, 6, 9, 1, 7, 4, 5, 8, 3],
+        [3, 4, 1, 8, 5, 9, 6, 7, 6],
+        [5, 8, 7, 3, 6, 2, 9, 1, 4],
+        [8, 7, 4, 5, 2, 1, 6, 3, 9],
+        [9, 2, 3, 7, 4, 6, 8, 5, 1],
+        [6, 1, 5, 9, 3, 8, 4, 2, 7],
       ];
       fillGrid(sudoku);
-      testCheckSudoku(0, 41, 41);
+      testCheckSudoku(0, 3, 3);
     });
   });
 });

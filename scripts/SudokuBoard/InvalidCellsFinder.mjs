@@ -1,8 +1,8 @@
 import Constants from "../common/Constants.mjs";
-import SudokuCellValidityChecker from "./SudokuCellValidityChecker.mjs";
+import CellValidityChecker from "./CellValidityChecker.mjs";
 
 export default function findInvalidCells(sudoku) {
-  const cellChecker = new SudokuCellValidityChecker(sudoku);
+  const cellChecker = new CellValidityChecker(sudoku);
   const invalidCellsPosition = [];
   for (let i = 0; i < Constants.gridSize; i++) {
     for (let j = 0; j < Constants.gridSize; j++) {
