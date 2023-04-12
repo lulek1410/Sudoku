@@ -38,6 +38,8 @@ function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.
 
 var _listenForGridInteractions = /*#__PURE__*/new WeakSet();
 var _disableGridInteractions = /*#__PURE__*/new WeakSet();
+var _listenForVisibilityChange = /*#__PURE__*/new WeakSet();
+var _disableVisibilityChangeListener = /*#__PURE__*/new WeakSet();
 var _listenForHeaderInteractions = /*#__PURE__*/new WeakSet();
 var _listenForDifficultyChangeButtonsInteractions = /*#__PURE__*/new WeakSet();
 var _disableDifficultyChangeButtonsInteractions = /*#__PURE__*/new WeakSet();
@@ -68,6 +70,8 @@ var EventHandler = /*#__PURE__*/_createClass(function EventHandler() {
   _classPrivateMethodInitSpec(this, _disableDifficultyChangeButtonsInteractions);
   _classPrivateMethodInitSpec(this, _listenForDifficultyChangeButtonsInteractions);
   _classPrivateMethodInitSpec(this, _listenForHeaderInteractions);
+  _classPrivateMethodInitSpec(this, _disableVisibilityChangeListener);
+  _classPrivateMethodInitSpec(this, _listenForVisibilityChange);
   _classPrivateMethodInitSpec(this, _disableGridInteractions);
   _classPrivateMethodInitSpec(this, _listenForGridInteractions);
   _classPrivateFieldInitSpec(this, _$checkButton, {
@@ -129,6 +133,20 @@ function _disableGridInteractions2() {
   });
   $(document).off("keyup");
 }
+function _listenForVisibilityChange2() {
+  var pauseCallback = _classPrivateFieldGet(this, _headerManager).handleGamePause;
+  var resumeCallback = _classPrivateFieldGet(this, _headerManager).handleGameResume;
+  $(document).on("visibilitychange", function (e) {
+    if (e.target.visibilityState === "hidden") {
+      pauseCallback();
+    } else {
+      resumeCallback();
+    }
+  });
+}
+function _disableVisibilityChangeListener2() {
+  $(document).off("visibilitychange");
+}
 function _listenForHeaderInteractions2() {
   var startButtonCallback = _classPrivateMethodGet(this, _startCallback, _startCallback2).bind(this);
   _classPrivateFieldGet(this, _$startButton).on("click", startButtonCallback);
@@ -185,12 +203,14 @@ function _startCallback2() {
     _classPrivateMethodGet(this, _listenForGridInteractions, _listenForGridInteractions2).call(this);
     _classPrivateMethodGet(this, _listenForNumberButtonsInteractions, _listenForNumberButtonsInteractions2).call(this);
     _classPrivateMethodGet(this, _listenForToolsInteractions, _listenForToolsInteractions2).call(this);
+    _classPrivateMethodGet(this, _listenForVisibilityChange, _listenForVisibilityChange2).call(this);
     _classPrivateMethodGet(this, _disableDifficultyChangeButtonsInteractions, _disableDifficultyChangeButtonsInteractions2).call(this);
     this.gameStarted = true;
   } else {
     _classPrivateFieldGet(this, _sudokuGridManager).endGame();
     _Header_MessageDisplyer_mjs__WEBPACK_IMPORTED_MODULE_3__["default"].resetInfo();
     _classPrivateMethodGet(this, _listenForDifficultyChangeButtonsInteractions, _listenForDifficultyChangeButtonsInteractions2).call(this);
+    _classPrivateMethodGet(this, _disableVisibilityChangeListener, _disableVisibilityChangeListener2).call(this);
     _classPrivateMethodGet(this, _stopGame, _stopGame2).call(this);
   }
 }
@@ -233,6 +253,16 @@ var HeaderManager = /*#__PURE__*/function () {
     value: function handleGameStart() {
       _Timer_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].startTimer();
       $("#start-button").text("Stop");
+    }
+  }, {
+    key: "handleGamePause",
+    value: function handleGamePause() {
+      _Timer_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].pauseTimer();
+    }
+  }, {
+    key: "handleGameResume",
+    value: function handleGameResume() {
+      _Timer_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].startTimer();
     }
   }, {
     key: "handleGameStop",
@@ -332,12 +362,12 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
 function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
-function _classStaticPrivateFieldSpecGet(receiver, classConstructor, descriptor) { _classCheckPrivateStaticAccess(receiver, classConstructor); _classCheckPrivateStaticFieldDescriptor(descriptor, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
-function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
 function _classStaticPrivateFieldSpecSet(receiver, classConstructor, descriptor, value) { _classCheckPrivateStaticAccess(receiver, classConstructor); _classCheckPrivateStaticFieldDescriptor(descriptor, "set"); _classApplyDescriptorSet(receiver, descriptor, value); return value; }
+function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
+function _classStaticPrivateFieldSpecGet(receiver, classConstructor, descriptor) { _classCheckPrivateStaticAccess(receiver, classConstructor); _classCheckPrivateStaticFieldDescriptor(descriptor, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
 function _classCheckPrivateStaticFieldDescriptor(descriptor, action) { if (descriptor === undefined) { throw new TypeError("attempted to " + action + " private static field before its declaration"); } }
 function _classCheckPrivateStaticAccess(receiver, classConstructor) { if (receiver !== classConstructor) { throw new TypeError("Private static access of wrong provenance"); } }
-function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
+function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
 var Timer = /*#__PURE__*/function () {
   function Timer() {
     _classCallCheck(this, Timer);
@@ -345,28 +375,39 @@ var Timer = /*#__PURE__*/function () {
   _createClass(Timer, null, [{
     key: "startTimer",
     value: function startTimer() {
-      var start = Date.now();
+      var _this = this;
+      var start = Date.now() - _classStaticPrivateFieldSpecGet(this, Timer, _elapsedTime);
       var seconds = "";
       var minutes = "";
       var updateTime = function updateTime(count) {
         return count < 10 ? "0" + count : "" + count;
       };
       _classStaticPrivateFieldSpecSet(this, Timer, _timer, setInterval(function () {
-        var elapsed = Date.now() - start;
-        var elapsedMinutes = Math.floor(elapsed / 60000);
-        seconds = updateTime(Math.floor(elapsed / 1000) - elapsedMinutes * 60);
+        _classStaticPrivateFieldSpecSet(_this, Timer, _elapsedTime, Date.now() - start);
+        var elapsedMinutes = Math.floor(_classStaticPrivateFieldSpecGet(_this, Timer, _elapsedTime) / 60000);
+        seconds = updateTime(Math.floor(_classStaticPrivateFieldSpecGet(_this, Timer, _elapsedTime) / 1000) - elapsedMinutes * 60);
         minutes = updateTime(elapsedMinutes);
         $("#timer").text("".concat(minutes, ":").concat(seconds));
       }, 100));
     }
   }, {
+    key: "pauseTimer",
+    value: function pauseTimer() {
+      clearInterval(_classStaticPrivateFieldSpecGet(this, Timer, _timer));
+    }
+  }, {
     key: "stopTimer",
     value: function stopTimer() {
       clearInterval(_classStaticPrivateFieldSpecGet(this, Timer, _timer));
+      _classStaticPrivateFieldSpecSet(this, Timer, _elapsedTime, 0);
     }
   }]);
   return Timer;
 }();
+var _elapsedTime = {
+  writable: true,
+  value: 0
+};
 var _timer = {
   writable: true,
   value: void 0
@@ -411,6 +452,133 @@ var BoxIndexCalculator = /*#__PURE__*/function () {
   return BoxIndexCalculator;
 }();
 
+
+/***/ }),
+
+/***/ "./scripts/SudokuBoard/CellValidityChecker.mjs":
+/*!*****************************************************!*\
+  !*** ./scripts/SudokuBoard/CellValidityChecker.mjs ***!
+  \*****************************************************/
+/***/ (function(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* binding */ CellValidityChecker; }
+/* harmony export */ });
+/* harmony import */ var _BoxIndexCalculator_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BoxIndexCalculator.mjs */ "./scripts/SudokuBoard/BoxIndexCalculator.mjs");
+/* harmony import */ var _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../common/Constants.mjs */ "./scripts/common/Constants.mjs");
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _classPrivateFieldInitSpec(obj, privateMap, value) { _checkPrivateRedeclaration(obj, privateMap); privateMap.set(obj, value); }
+function _classPrivateMethodInitSpec(obj, privateSet) { _checkPrivateRedeclaration(obj, privateSet); privateSet.add(obj); }
+function _checkPrivateRedeclaration(obj, privateCollection) { if (privateCollection.has(obj)) { throw new TypeError("Cannot initialize the same private elements twice on an object"); } }
+function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
+function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
+function _classPrivateMethodGet(receiver, privateSet, fn) { if (!privateSet.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return fn; }
+function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "set"); _classApplyDescriptorSet(receiver, descriptor, value); return value; }
+function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
+function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
+
+
+var _unUsedInBox = /*#__PURE__*/new WeakSet();
+var _unUsedInRow = /*#__PURE__*/new WeakSet();
+var _unUsedInColumn = /*#__PURE__*/new WeakSet();
+var _sudoku = /*#__PURE__*/new WeakMap();
+var CellValidityChecker = /*#__PURE__*/function () {
+  function CellValidityChecker() {
+    _classCallCheck(this, CellValidityChecker);
+    _classPrivateMethodInitSpec(this, _unUsedInColumn);
+    _classPrivateMethodInitSpec(this, _unUsedInRow);
+    _classPrivateMethodInitSpec(this, _unUsedInBox);
+    _classPrivateFieldInitSpec(this, _sudoku, {
+      writable: true,
+      value: null
+    });
+  }
+  _createClass(CellValidityChecker, [{
+    key: "isCellValid",
+    value: function isCellValid(sudoku, position) {
+      var number = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : sudoku[position.row][position.col];
+      _classPrivateFieldSet(this, _sudoku, sudoku);
+      return _classPrivateMethodGet(this, _unUsedInColumn, _unUsedInColumn2).call(this, position, number) && _classPrivateMethodGet(this, _unUsedInRow, _unUsedInRow2).call(this, position, number) && _classPrivateMethodGet(this, _unUsedInBox, _unUsedInBox2).call(this, position, number);
+    }
+  }]);
+  return CellValidityChecker;
+}();
+function _unUsedInBox2(position, num) {
+  var row = position.row,
+    col = position.col;
+  var rowStart = _BoxIndexCalculator_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].startIndex(row);
+  var colStart = _BoxIndexCalculator_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].startIndex(col);
+  for (var i = 0; i < _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].boxSize; i++) {
+    var inBoxPosRow = rowStart + i;
+    if (inBoxPosRow !== row) {
+      for (var j = 0; j < _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].boxSize; j++) {
+        var inBoxPosCol = colStart + j;
+        if (inBoxPosCol !== col && _classPrivateFieldGet(this, _sudoku)[inBoxPosRow][inBoxPosCol] == num) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+function _unUsedInRow2(position, num) {
+  for (var j = 0; j < _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].gridSize; j++) {
+    if (j !== position.col && _classPrivateFieldGet(this, _sudoku)[position.row][j] === num) {
+      return false;
+    }
+  }
+  return true;
+}
+function _unUsedInColumn2(position, num) {
+  for (var i = 0; i < _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].gridSize; i++) {
+    if (i !== position.row && _classPrivateFieldGet(this, _sudoku)[i][position.col] === num) {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+/***/ }),
+
+/***/ "./scripts/SudokuBoard/InvalidCellsFinder.mjs":
+/*!****************************************************!*\
+  !*** ./scripts/SudokuBoard/InvalidCellsFinder.mjs ***!
+  \****************************************************/
+/***/ (function(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* binding */ findInvalidCells; }
+/* harmony export */ });
+/* harmony import */ var _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../common/Constants.mjs */ "./scripts/common/Constants.mjs");
+/* harmony import */ var _CellValidityChecker_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CellValidityChecker.mjs */ "./scripts/SudokuBoard/CellValidityChecker.mjs");
+
+
+function findInvalidCells(sudoku) {
+  var cellChecker = new _CellValidityChecker_mjs__WEBPACK_IMPORTED_MODULE_1__["default"](sudoku);
+  var mistakeCells = [];
+  var emptyCells = [];
+  for (var i = 0; i < _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].gridSize; i++) {
+    for (var j = 0; j < _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].gridSize; j++) {
+      if (!sudoku[i][j]) {
+        emptyCells.push([i, j]);
+      } else if (!cellChecker.isCellValid(i, j, sudoku[i][j])) {
+        mistakeCells.push([i, j]);
+      }
+    }
+  }
+  return {
+    mistakeCells: mistakeCells,
+    emptyCells: emptyCells
+  };
+}
 
 /***/ }),
 
@@ -485,6 +653,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _BoxIndexCalculator_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./BoxIndexCalculator.mjs */ "./scripts/SudokuBoard/BoxIndexCalculator.mjs");
 /* harmony import */ var _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../common/Constants.mjs */ "./scripts/common/Constants.mjs");
+/* harmony import */ var _CellValidityChecker_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./CellValidityChecker.mjs */ "./scripts/SudokuBoard/CellValidityChecker.mjs");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -508,29 +677,27 @@ function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { 
 function _classPrivateMethodGet(receiver, privateSet, fn) { if (!privateSet.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return fn; }
 
 
+
 var _initializeValues = /*#__PURE__*/new WeakSet();
 var _fillDiagonalBoxes = /*#__PURE__*/new WeakSet();
 var _fillBox = /*#__PURE__*/new WeakSet();
-var _unUsedInBox = /*#__PURE__*/new WeakSet();
 var _fillRemaining = /*#__PURE__*/new WeakSet();
-var _isValid = /*#__PURE__*/new WeakSet();
-var _unUsedInRow = /*#__PURE__*/new WeakSet();
-var _unUsedInColumn = /*#__PURE__*/new WeakSet();
 var _sudoku = /*#__PURE__*/new WeakMap();
+var _cellValidityChecker = /*#__PURE__*/new WeakMap();
 var SudokuGenerator = /*#__PURE__*/function () {
   function SudokuGenerator() {
     _classCallCheck(this, SudokuGenerator);
-    _classPrivateMethodInitSpec(this, _unUsedInColumn);
-    _classPrivateMethodInitSpec(this, _unUsedInRow);
-    _classPrivateMethodInitSpec(this, _isValid);
     _classPrivateMethodInitSpec(this, _fillRemaining);
-    _classPrivateMethodInitSpec(this, _unUsedInBox);
     _classPrivateMethodInitSpec(this, _fillBox);
     _classPrivateMethodInitSpec(this, _fillDiagonalBoxes);
     _classPrivateMethodInitSpec(this, _initializeValues);
     _classPrivateFieldInitSpec(this, _sudoku, {
       writable: true,
       value: []
+    });
+    _classPrivateFieldInitSpec(this, _cellValidityChecker, {
+      writable: true,
+      value: new _CellValidityChecker_mjs__WEBPACK_IMPORTED_MODULE_2__["default"]()
     });
   }
   _createClass(SudokuGenerator, [{
@@ -562,26 +729,20 @@ function _fillDiagonalBoxes2() {
 function _fillBox2(rowStart, colStart) {
   for (var i = 0; i < _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].boxSize; ++i) {
     for (var j = 0; j < _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].boxSize; ++j) {
-      var number = 0;
+      var num = 0;
+      var position = {
+        row: rowStart + i,
+        col: colStart + j
+      };
       while (true) {
-        number = Math.floor(Math.random() * _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].gridSize + 1);
-        if (_classPrivateMethodGet(this, _unUsedInBox, _unUsedInBox2).call(this, rowStart, colStart, number)) {
+        num = Math.floor(Math.random() * _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].gridSize + 1);
+        if (_classPrivateFieldGet(this, _cellValidityChecker).isCellValid(_classPrivateFieldGet(this, _sudoku), position, num)) {
           break;
         }
       }
-      _classPrivateFieldGet(this, _sudoku)[rowStart + i][colStart + j] = number;
+      _classPrivateFieldGet(this, _sudoku)[position.row][position.col] = num;
     }
   }
-}
-function _unUsedInBox2(rowStart, colStart, num) {
-  for (var i = 0; i < _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].boxSize; i++) {
-    for (var j = 0; j < _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].boxSize; j++) {
-      if (_classPrivateFieldGet(this, _sudoku)[rowStart + i][colStart + j] == num) {
-        return false;
-      }
-    }
-  }
-  return true;
 }
 function _fillRemaining2(row, column) {
   if (row === _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].gridSize - 1 && column === _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].gridSize) {
@@ -591,38 +752,23 @@ function _fillRemaining2(row, column) {
     row += 1;
     column = 0;
   }
-  if (_classPrivateFieldGet(this, _sudoku)[row][column] !== 0) {
-    return _classPrivateMethodGet(this, _fillRemaining, _fillRemaining2).call(this, row, column + 1);
+  var position = {
+    row: row,
+    col: column
+  };
+  if (_classPrivateFieldGet(this, _sudoku)[position.row][position.col] !== 0) {
+    return _classPrivateMethodGet(this, _fillRemaining, _fillRemaining2).call(this, position.row, position.col + 1);
   }
   for (var num = 1; num <= _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].gridSize; num++) {
-    if (_classPrivateMethodGet(this, _isValid, _isValid2).call(this, row, column, num)) {
-      _classPrivateFieldGet(this, _sudoku)[row][column] = num;
-      if (_classPrivateMethodGet(this, _fillRemaining, _fillRemaining2).call(this, row, column + 1)) {
+    if (_classPrivateFieldGet(this, _cellValidityChecker).isCellValid(_classPrivateFieldGet(this, _sudoku), position, num)) {
+      _classPrivateFieldGet(this, _sudoku)[position.row][position.col] = num;
+      if (_classPrivateMethodGet(this, _fillRemaining, _fillRemaining2).call(this, position.row, position.col + 1)) {
         return true;
       }
-      _classPrivateFieldGet(this, _sudoku)[row][column] = 0;
+      _classPrivateFieldGet(this, _sudoku)[position.row][position.col] = 0;
     }
   }
   return false;
-}
-function _isValid2(row, column, number) {
-  return _classPrivateMethodGet(this, _unUsedInColumn, _unUsedInColumn2).call(this, column, number) && _classPrivateMethodGet(this, _unUsedInRow, _unUsedInRow2).call(this, row, number) && _classPrivateMethodGet(this, _unUsedInBox, _unUsedInBox2).call(this, _BoxIndexCalculator_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].startIndex(row), _BoxIndexCalculator_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].startIndex(column), number);
-}
-function _unUsedInRow2(row, num) {
-  for (var j = 0; j < _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].gridSize; j++) {
-    if (_classPrivateFieldGet(this, _sudoku)[row][j] === num) {
-      return false;
-    }
-  }
-  return true;
-}
-function _unUsedInColumn2(column, num) {
-  for (var i = 0; i < _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].gridSize; i++) {
-    if (_classPrivateFieldGet(this, _sudoku)[i][column] === num) {
-      return false;
-    }
-  }
-  return true;
 }
 
 
@@ -643,6 +789,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _SudokuGenerator_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./SudokuGenerator.mjs */ "./scripts/SudokuBoard/SudokuGenerator.mjs");
 /* harmony import */ var _PencilTool_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./PencilTool.mjs */ "./scripts/SudokuBoard/PencilTool.mjs");
 /* harmony import */ var _Header_MessageDisplyer_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Header/MessageDisplyer.mjs */ "./scripts/Header/MessageDisplyer.mjs");
+/* harmony import */ var _InvalidCellsFinder_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./InvalidCellsFinder.mjs */ "./scripts/SudokuBoard/InvalidCellsFinder.mjs");
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -670,10 +817,11 @@ function _classPrivateMethodGet(receiver, privateSet, fn) { if (!privateSet.has(
 
 
 
+
 var _changeSelectedCellsText = /*#__PURE__*/new WeakSet();
 var _removeCellsClasses = /*#__PURE__*/new WeakSet();
 var _handleSudokuCheck = /*#__PURE__*/new WeakSet();
-var _getCellTextContent = /*#__PURE__*/new WeakSet();
+var _getCellText = /*#__PURE__*/new WeakSet();
 var _makeCellsInvalid = /*#__PURE__*/new WeakSet();
 var _markImportantCells = /*#__PURE__*/new WeakSet();
 var _addImportantCellClass = /*#__PURE__*/new WeakSet();
@@ -707,7 +855,7 @@ var SudokuGridManager = /*#__PURE__*/function () {
     _classPrivateMethodInitSpec(this, _addImportantCellClass);
     _classPrivateMethodInitSpec(this, _markImportantCells);
     _classPrivateMethodInitSpec(this, _makeCellsInvalid);
-    _classPrivateMethodInitSpec(this, _getCellTextContent);
+    _classPrivateMethodInitSpec(this, _getCellText);
     _classPrivateMethodInitSpec(this, _handleSudokuCheck);
     _classPrivateMethodInitSpec(this, _removeCellsClasses);
     _classPrivateMethodInitSpec(this, _changeSelectedCellsText);
@@ -801,20 +949,20 @@ var SudokuGridManager = /*#__PURE__*/function () {
   }, {
     key: "isSudokuValid",
     value: function isSudokuValid() {
-      var mistakeCells = [];
-      var emptyCells = [];
-      for (var i = 0; i < _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].gridSize; ++i) {
-        for (var j = 0; j < _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].gridSize; ++j) {
-          var cell = _classPrivateFieldGet(this, _grid)[i][j];
+      var _this = this;
+      var sudoku = _classPrivateFieldGet(this, _grid).map(function (row) {
+        return row.map(function (cell) {
           var element = cell.element;
-          var elementContent = _classPrivateMethodGet(this, _getCellTextContent, _getCellTextContent2).call(this, element);
-          if (elementContent === "" || element.hasClass("pencil-grid")) {
-            emptyCells.push(element);
-          } else if (elementContent !== cell.value.toString()) {
-            mistakeCells.push(element);
+          var elementText = _classPrivateMethodGet(_this, _getCellText, _getCellText2).call(_this, element);
+          if (element.hasClass("pencil-grid") || elementText === "") {
+            return 0;
           }
-        }
-      }
+          return +elementText;
+        });
+      });
+      var _findInvalidCells = (0,_InvalidCellsFinder_mjs__WEBPACK_IMPORTED_MODULE_5__["default"])(sudoku),
+        mistakeCells = _findInvalidCells.mistakeCells,
+        emptyCells = _findInvalidCells.emptyCells;
       _classPrivateMethodGet(this, _handleSudokuCheck, _handleSudokuCheck2).call(this, emptyCells, mistakeCells);
       if (emptyCells.length !== 0 || mistakeCells.length !== 0) {
         return false;
@@ -834,7 +982,7 @@ var SudokuGridManager = /*#__PURE__*/function () {
 }();
 function _changeSelectedCellsText2(key) {
   var childNumber = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 4;
-  if (_classPrivateMethodGet(this, _getCellTextContent, _getCellTextContent2).call(this, _classPrivateFieldGet(this, _$selectedCell), childNumber) === "") {
+  if (_classPrivateMethodGet(this, _getCellText, _getCellText2).call(this, _classPrivateFieldGet(this, _$selectedCell), childNumber) === "") {
     _classPrivateMethodGet(this, _setCellText, _setCellText2).call(this, _classPrivateFieldGet(this, _$selectedCell), key, childNumber);
   } else {
     _classPrivateMethodGet(this, _setCellText, _setCellText2).call(this, _classPrivateFieldGet(this, _$selectedCell), "", childNumber);
@@ -865,13 +1013,14 @@ function _handleSudokuCheck2(emptyCells, mistakeCells) {
   }
   _Header_MessageDisplyer_mjs__WEBPACK_IMPORTED_MODULE_4__["default"].displayMessage(numOfEmptyCells, numOfMistakes);
 }
-function _getCellTextContent2(cell) {
+function _getCellText2(cell) {
   var childNumber = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 4;
   return cell.children().eq(childNumber).text();
 }
-function _makeCellsInvalid2(cellsArray) {
-  cellsArray.forEach(function (cell) {
-    $(cell).addClass("invalid");
+function _makeCellsInvalid2(cellsPositions) {
+  var _this2 = this;
+  cellsPositions.forEach(function (cellPosition) {
+    _classPrivateFieldGet(_this2, _grid)[cellPosition[0]][cellPosition[1]].element.addClass("invalid");
   });
 }
 function _markImportantCells2() {
