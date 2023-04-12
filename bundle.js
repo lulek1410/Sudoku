@@ -141,15 +141,11 @@ function _disableGridInteractions2() {
 function _listenForVisibilityChange2() {
   var pauseCallback = _classPrivateFieldGet(this, _headerManager).handleGamePause;
   var resumeCallback = _classPrivateFieldGet(this, _headerManager).handleGameResume;
-  console.log("AAAAAAAAA");
   _classPrivateFieldGet(this, _$document).on("visibilitychange", function (e) {
-    console.log("BBBBBBB");
     if (e.target.visibilityState === "hidden") {
       pauseCallback();
-      console.log("CCCCCCCC");
     } else {
       resumeCallback();
-      console.log("DDDDDDDDD");
     }
   });
 }
@@ -578,7 +574,10 @@ function findInvalidCells(sudoku) {
     for (var j = 0; j < _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_0__["default"].gridSize; j++) {
       if (!sudoku[i][j]) {
         emptyCells.push([i, j]);
-      } else if (!cellChecker.isCellValid(i, j, sudoku[i][j])) {
+      } else if (!cellChecker.isCellValid(sudoku, {
+        row: i,
+        col: j
+      }, sudoku[i][j])) {
         mistakeCells.push([i, j]);
       }
     }
@@ -838,6 +837,7 @@ var _removeImportantCellClass = /*#__PURE__*/new WeakSet();
 var _removeSelectedCellClass = /*#__PURE__*/new WeakSet();
 var _getImportantCells = /*#__PURE__*/new WeakSet();
 var _isCellEditable = /*#__PURE__*/new WeakSet();
+var _elementIsEditable = /*#__PURE__*/new WeakSet();
 var _findCellPosition = /*#__PURE__*/new WeakSet();
 var _initializeGridCells = /*#__PURE__*/new WeakSet();
 var _initializeGridValues = /*#__PURE__*/new WeakSet();
@@ -857,6 +857,7 @@ var SudokuGridManager = /*#__PURE__*/function () {
     _classPrivateMethodInitSpec(this, _initializeGridValues);
     _classPrivateMethodInitSpec(this, _initializeGridCells);
     _classPrivateMethodInitSpec(this, _findCellPosition);
+    _classPrivateMethodInitSpec(this, _elementIsEditable);
     _classPrivateMethodInitSpec(this, _isCellEditable);
     _classPrivateMethodInitSpec(this, _getImportantCells);
     _classPrivateMethodInitSpec(this, _removeSelectedCellClass);
@@ -1029,7 +1030,10 @@ function _getCellText2(cell) {
 function _makeCellsInvalid2(cellsPositions) {
   var _this2 = this;
   cellsPositions.forEach(function (cellPosition) {
-    _classPrivateFieldGet(_this2, _grid)[cellPosition[0]][cellPosition[1]].element.addClass("invalid");
+    var element = _classPrivateFieldGet(_this2, _grid)[cellPosition[0]][cellPosition[1]].element;
+    if (_classPrivateMethodGet(_this2, _elementIsEditable, _elementIsEditable2).call(_this2, element)) {
+      element.addClass("invalid");
+    }
   });
 }
 function _markImportantCells2() {
@@ -1102,7 +1106,10 @@ function _getImportantCells2(cell) {
 }
 function _isCellEditable2(cell) {
   var position = _classPrivateMethodGet(this, _findCellPosition, _findCellPosition2).call(this, cell);
-  return !_classPrivateFieldGet(this, _grid)[position[0]][position[1]].element.hasClass("uneditable");
+  return _classPrivateMethodGet(this, _elementIsEditable, _elementIsEditable2).call(this, _classPrivateFieldGet(this, _grid)[position[0]][position[1]].element);
+}
+function _elementIsEditable2(element) {
+  return !element.hasClass("uneditable");
 }
 function _findCellPosition2(cell) {
   for (var i = 0; i < _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].gridSize; ++i) {
@@ -1155,10 +1162,10 @@ function _makeCellsUneditable2(difficulty) {
   while (count !== numOfUneditableCells) {
     var i = Math.floor(Math.random() * _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].gridSize);
     var j = Math.floor(Math.random() * _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].gridSize);
-    var cell = _classPrivateFieldGet(this, _grid)[i][j].element;
-    if (_classPrivateMethodGet(this, _isCellEditable, _isCellEditable2).call(this, cell)) {
+    var element = _classPrivateFieldGet(this, _grid)[i][j].element;
+    if (_classPrivateMethodGet(this, _elementIsEditable, _elementIsEditable2).call(this, element)) {
       ++count;
-      cell.addClass("uneditable");
+      element.addClass("uneditable");
     }
   }
 }
@@ -1167,7 +1174,7 @@ function _displayUneditableCellsValue2() {
     for (var j = 0; j < _common_Constants_mjs__WEBPACK_IMPORTED_MODULE_1__["default"].gridSize; ++j) {
       var cell = _classPrivateFieldGet(this, _grid)[i][j];
       var element = cell.element;
-      if (!_classPrivateMethodGet(this, _isCellEditable, _isCellEditable2).call(this, element)) {
+      if (!_classPrivateMethodGet(this, _elementIsEditable, _elementIsEditable2).call(this, element)) {
         _classPrivateMethodGet(this, _setCellText, _setCellText2).call(this, element, cell.value);
       }
     }

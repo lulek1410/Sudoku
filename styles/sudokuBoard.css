@@ -70,7 +70,6 @@
 }
 
 .invalid {
-  color: white;
   background-color: var(--secondary-color-dark);
 }
 
