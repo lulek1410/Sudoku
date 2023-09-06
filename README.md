@@ -1,5 +1,6 @@
 # Sudoku
-Simple implementation of well known puzzle game Sudoku.
+> Simple implementation of well known puzzle game Sudoku.
+
 # Table of contents
 * [Basic information](#basic-information)
 * [Functionality](#functionality)
