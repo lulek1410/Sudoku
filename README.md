@@ -5,7 +5,7 @@ Simple implementation of well known puzzle game Sudoku.
 * [Functionality](#functionality)
 * [Technology Used](#technology-used)
 * [Screenschots](#screenschots)
-* [Aditional Information](#aditional-information)
+* [Status](#status)
 * [Contact](#contact)
 * [License](#license)
 
@@ -36,6 +36,26 @@ Checking the board provides an according response based on the type of wrong cel
 * babel -> backwards-compatibility
 
 ## Screenschots
-![]()
+### Desktop view
+![Desktop](screenshots/desktop.png)
+### Mobile view
+![Mobile](screenshots/mobile.png)
+### Game
+![Start](screenshots/start.png)
+![FillingCells](screenshots/filling_cells.png)
+### Board Check
+![Empty](screenshots/empty.png)
+![Mistakes](screenshots/mistakes.png)
+![Win](screenshots/win.png)
+
+## Status
+Project is: __finished__
+
+## Contact
+Created by [@Jan Szewczyński](https://github.com/lulek1410).
+Feel free to contact me!
+
+## License
+Free to use based on the MIT license.
 
 
